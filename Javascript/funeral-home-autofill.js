@@ -43,31 +43,47 @@
       return null;
     }
 
+    // Try to find all inputs and log them to help debug
+    console.log('All input fields on page:');
+    document.querySelectorAll('input[type="text"]').forEach((input, idx) => {
+      if (input.name || input.id) {
+        console.log(`Input ${idx}: name="${input.name}" id="${input.id}" placeholder="${input.placeholder}"`);
+      }
+    });
+
     const fields = {
       company: getField([
         'input[name="shippingAddress.company"]', 
-        'input[name="shippingAddress[company]"]',
-        '#addressLine1Input'
+        'input[name="shippingAddress[company]"]'
       ]),
       address1: getField([
         'input[name="shippingAddress.addressLine1"]', 
         'input[name="shippingAddress[addressLine1]"]',
         'input[name="address1"]',
         'input[name="street_1"]',
+        'input[name="street1"]',
+        'input[id*="street_1"]',
+        'input[id*="street-1"]',
         'input[id*="addressLine1"]',
-        'input[placeholder*="Address"]'
+        'input[placeholder*="Street address"]',
+        'input[placeholder*="Address Line 1"]'
       ]),
       address2: getField([
         'input[name="shippingAddress.addressLine2"]', 
         'input[name="shippingAddress[addressLine2]"]',
         'input[name="address2"]',
         'input[name="street_2"]',
+        'input[name="street2"]',
+        'input[id*="street_2"]',
+        'input[id*="street-2"]',
         'input[id*="addressLine2"]',
-        'input[placeholder*="Apartment"]'
+        'input[placeholder*="Apartment"]',
+        'input[placeholder*="Address Line 2"]'
       ]),
       city: getField([
         'input[name="shippingAddress.city"]', 
-        'input[name="shippingAddress[city]"]'
+        'input[name="shippingAddress[city]"]',
+        'input[name="city"]'
       ]),
       state: getField([
         'select[name="shippingAddress.stateOrProvince"]', 
@@ -79,16 +95,67 @@
       ]),
       zip: getField([
         'input[name="shippingAddress.postalCode"]', 
-        'input[name="shippingAddress[postalCode]"]'
+        'input[name="shippingAddress[postalCode]"]',
+        'input[name="postalCode"]'
       ]),
       phone: getField([
         'input[name="shippingAddress.phone"]', 
-        'input[name="shippingAddress[phone]"]'
+        'input[name="shippingAddress[phone]"]',
+        'input[name="phone"]'
       ])
     };
 
     console.log('Autofilling with:', home);
     console.log('Fields found:', Object.keys(fields).filter(k => fields[k]));
+
+    // Autofill all fields with a slight delay to ensure rendering
+    setTimeout(() => {
+      if (fields.company) {
+        console.log('Filling company:', home.company);
+        fields.company.value = home.company;
+        fields.company.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.company.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.address1) {
+        console.log('Filling address1:', home.address1);
+        fields.address1.value = home.address1;
+        fields.address1.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.address1.dispatchEvent(new Event('change', { bubbles: true }));
+        fields.address1.dispatchEvent(new Event('blur', { bubbles: true }));
+      }
+      if (home.address2 && fields.address2) {
+        console.log('Filling address2:', home.address2);
+        fields.address2.value = home.address2;
+        fields.address2.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.address2.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.city) {
+        console.log('Filling city:', home.city);
+        fields.city.value = home.city;
+        fields.city.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.city.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.state) {
+        console.log('Filling state:', home.state);
+        fields.state.value = home.state;
+        fields.state.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.state.dispatchEvent(new Event('change', { bubbles: true }));
+        fields.state.dispatchEvent(new Event('blur', { bubbles: true }));
+      }
+      if (fields.zip) {
+        console.log('Filling zip:', home.zip);
+        fields.zip.value = home.zip;
+        fields.zip.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.zip.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.phone) {
+        console.log('Filling phone:', formatPhone(home.phone));
+        fields.phone.value = formatPhone(home.phone);
+        fields.phone.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.phone.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, 100);
+  }
 
     // Autofill all fields with a slight delay to ensure rendering
     setTimeout(() => {
