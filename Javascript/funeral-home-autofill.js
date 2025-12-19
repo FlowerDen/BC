@@ -53,6 +53,7 @@
         'input[name="shippingAddress.addressLine1"]', 
         'input[name="shippingAddress[addressLine1]"]',
         'input[name="address1"]',
+        'input[name="street_1"]',
         'input[id*="addressLine1"]',
         'input[placeholder*="Address"]'
       ]),
@@ -60,6 +61,7 @@
         'input[name="shippingAddress.addressLine2"]', 
         'input[name="shippingAddress[addressLine2]"]',
         'input[name="address2"]',
+        'input[name="street_2"]',
         'input[id*="addressLine2"]',
         'input[placeholder*="Apartment"]'
       ]),
