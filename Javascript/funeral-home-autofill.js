@@ -184,11 +184,48 @@
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '16px';
 
-    const label = document.createElement('label');
-    label.textContent = 'Deliver to Funeral Home (optional)';
-    label.style.fontWeight = '600';
-    label.style.display = 'block';
-    label.style.marginBottom = '6px';
+    // Question label
+    const questionLabel = document.createElement('label');
+    questionLabel.textContent = 'Funeral Home Delivery?';
+    questionLabel.style.fontWeight = '600';
+    questionLabel.style.display = 'block';
+    questionLabel.style.marginBottom = '8px';
+
+    // Yes/No buttons container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '10px';
+    buttonContainer.style.marginBottom = '12px';
+
+    const yesButton = document.createElement('button');
+    yesButton.type = 'button';
+    yesButton.textContent = 'Yes';
+    yesButton.style.padding = '8px 20px';
+    yesButton.style.border = '2px solid #ccc';
+    yesButton.style.borderRadius = '4px';
+    yesButton.style.backgroundColor = '#fff';
+    yesButton.style.cursor = 'pointer';
+    yesButton.style.fontWeight = '500';
+
+    const noButton = document.createElement('button');
+    noButton.type = 'button';
+    noButton.textContent = 'No';
+    noButton.style.padding = '8px 20px';
+    noButton.style.border = '2px solid #ccc';
+    noButton.style.borderRadius = '4px';
+    noButton.style.backgroundColor = '#fff';
+    noButton.style.cursor = 'pointer';
+    noButton.style.fontWeight = '500';
+
+    // Dropdown container (initially hidden)
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.style.display = 'none';
+
+    const dropdownLabel = document.createElement('label');
+    dropdownLabel.textContent = 'Select Funeral Home';
+    dropdownLabel.style.fontWeight = '600';
+    dropdownLabel.style.display = 'block';
+    dropdownLabel.style.marginBottom = '6px';
 
     const select = document.createElement('select');
     select.id = 'funeral-home-select';
@@ -204,8 +241,37 @@
       if (idx !== "") fillShipping(FUNERAL_HOMES[idx]);
     });
 
-    wrapper.appendChild(label);
-    wrapper.appendChild(select);
+    dropdownContainer.appendChild(dropdownLabel);
+    dropdownContainer.appendChild(select);
+
+    // Button click handlers
+    yesButton.addEventListener('click', function () {
+      yesButton.style.backgroundColor = '#007bff';
+      yesButton.style.color = '#fff';
+      yesButton.style.borderColor = '#007bff';
+      noButton.style.backgroundColor = '#fff';
+      noButton.style.color = '#000';
+      noButton.style.borderColor = '#ccc';
+      dropdownContainer.style.display = 'block';
+    });
+
+    noButton.addEventListener('click', function () {
+      noButton.style.backgroundColor = '#dc3545';
+      noButton.style.color = '#fff';
+      noButton.style.borderColor = '#dc3545';
+      yesButton.style.backgroundColor = '#fff';
+      yesButton.style.color = '#000';
+      yesButton.style.borderColor = '#ccc';
+      dropdownContainer.style.display = 'none';
+      select.value = '';
+    });
+
+    buttonContainer.appendChild(yesButton);
+    buttonContainer.appendChild(noButton);
+
+    wrapper.appendChild(questionLabel);
+    wrapper.appendChild(buttonContainer);
+    wrapper.appendChild(dropdownContainer);
 
     // Insert dropdown BEFORE Country field
     const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
