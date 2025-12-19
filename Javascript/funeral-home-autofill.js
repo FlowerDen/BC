@@ -110,91 +110,55 @@
 
     // Autofill all fields with a slight delay to ensure rendering
     setTimeout(() => {
+      // Helper to set value on React-controlled inputs
+      function setFieldValue(field, value) {
+        if (!field) return;
+        
+        // Set the value
+        field.value = value;
+        
+        // For React-controlled inputs, we need to override the setter
+        const descriptor = Object.getOwnPropertyDescriptor(field, 'value') || 
+                          Object.getOwnPropertyDescriptor(Object.getPrototypeOf(field), 'value');
+        if (descriptor && descriptor.set) {
+          descriptor.set.call(field, value);
+        }
+        
+        // Trigger all necessary events
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+        field.dispatchEvent(new Event('blur', { bubbles: true }));
+        field.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
+        field.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+      }
+
       if (fields.company) {
         console.log('Filling company:', home.company);
-        fields.company.value = home.company;
-        fields.company.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.company.dispatchEvent(new Event('change', { bubbles: true }));
+        setFieldValue(fields.company, home.company);
       }
       if (fields.address1) {
         console.log('Filling address1:', home.address1);
-        fields.address1.value = home.address1;
-        fields.address1.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.address1.dispatchEvent(new Event('change', { bubbles: true }));
-        fields.address1.dispatchEvent(new Event('blur', { bubbles: true }));
+        setFieldValue(fields.address1, home.address1);
       }
       if (home.address2 && fields.address2) {
         console.log('Filling address2:', home.address2);
-        fields.address2.value = home.address2;
-        fields.address2.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.address2.dispatchEvent(new Event('change', { bubbles: true }));
+        setFieldValue(fields.address2, home.address2);
       }
       if (fields.city) {
         console.log('Filling city:', home.city);
-        fields.city.value = home.city;
-        fields.city.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.city.dispatchEvent(new Event('change', { bubbles: true }));
+        setFieldValue(fields.city, home.city);
       }
       if (fields.state) {
         console.log('Filling state:', home.state);
-        fields.state.value = home.state;
-        fields.state.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.state.dispatchEvent(new Event('change', { bubbles: true }));
-        fields.state.dispatchEvent(new Event('blur', { bubbles: true }));
+        setFieldValue(fields.state, home.state);
       }
       if (fields.zip) {
         console.log('Filling zip:', home.zip);
-        fields.zip.value = home.zip;
-        fields.zip.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.zip.dispatchEvent(new Event('change', { bubbles: true }));
+        setFieldValue(fields.zip, home.zip);
       }
       if (fields.phone) {
         console.log('Filling phone:', formatPhone(home.phone));
-        fields.phone.value = formatPhone(home.phone);
-        fields.phone.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.phone.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }, 100);
-  }
-
-    // Autofill all fields with a slight delay to ensure rendering
-    setTimeout(() => {
-      if (fields.company) {
-        fields.company.value = home.company;
-        fields.company.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.company.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      if (fields.address1) {
-        fields.address1.value = home.address1;
-        fields.address1.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.address1.dispatchEvent(new Event('change', { bubbles: true }));
-        fields.address1.dispatchEvent(new Event('blur', { bubbles: true }));
-      }
-      if (home.address2 && fields.address2) {
-        fields.address2.value = home.address2;
-        fields.address2.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.address2.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      if (fields.city) {
-        fields.city.value = home.city;
-        fields.city.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.city.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      if (fields.state) {
-        fields.state.value = home.state;
-        fields.state.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.state.dispatchEvent(new Event('change', { bubbles: true }));
-        fields.state.dispatchEvent(new Event('blur', { bubbles: true }));
-      }
-      if (fields.zip) {
-        fields.zip.value = home.zip;
-        fields.zip.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.zip.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      if (fields.phone) {
-        fields.phone.value = formatPhone(home.phone);
-        fields.phone.dispatchEvent(new Event('input', { bubbles: true }));
-        fields.phone.dispatchEvent(new Event('change', { bubbles: true }));
+        setFieldValue(fields.phone, formatPhone(home.phone));
       }
     }, 100);
   }
