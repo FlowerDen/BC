@@ -186,7 +186,7 @@
 
     // Question label
     const questionLabel = document.createElement('label');
-    questionLabel.textContent = 'Funeral Home Delivery?';
+    questionLabel.textContent = 'Deliver to Funeral Home? (Optional)';
     questionLabel.style.fontWeight = '600';
     questionLabel.style.display = 'block';
     questionLabel.style.marginBottom = '8px';
