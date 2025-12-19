@@ -176,8 +176,16 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
-    const countrySelect = document.querySelector('select[name="shippingAddress.countryCode"]');
-    if (!countrySelect) return;
+    const countrySelect = document.querySelector(
+      'select[name="shippingAddress.countryCode"],' +
+      'select[name="shippingAddress[countryCode]"],' +
+      'select[name="countryCode"],' +
+      'select[id*="country"]'
+    );
+    if (!countrySelect) {
+      console.warn('Country select not found. Tried multiple selectors.');
+      return;
+    }
 
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '16px';
@@ -208,6 +216,7 @@
     // Insert dropdown BEFORE Country field
     const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
     fieldWrapper.parentNode.insertBefore(wrapper, fieldWrapper);
+    console.log('Dropdown injected successfully');
   }
 
   // Observe for dynamic changes in checkout
