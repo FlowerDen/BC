@@ -32,7 +32,6 @@
   function fillShipping(home) {
     const selectors = {
       company: 'input[name="shippingAddress.company"]',
-      firstName: 'input[name="shippingAddress.firstName"]',
       address1: 'input[name="shippingAddress.addressLine1"]',
       city: 'input[name="shippingAddress.city"]',
       state: 'select[name="shippingAddress.stateOrProvince"]',
@@ -40,13 +39,23 @@
       phone: 'input[name="shippingAddress.phone"]'
     };
 
+    // Only autofill company, address, city, state, zip, phone (not first name)
     if (document.querySelector(selectors.company)) document.querySelector(selectors.company).value = home.company;
-    if (document.querySelector(selectors.firstName)) document.querySelector(selectors.firstName).value = home.company;
     if (document.querySelector(selectors.address1)) document.querySelector(selectors.address1).value = home.address1;
     if (document.querySelector(selectors.city)) document.querySelector(selectors.city).value = home.city;
     if (document.querySelector(selectors.state)) document.querySelector(selectors.state).value = home.state;
     if (document.querySelector(selectors.zip)) document.querySelector(selectors.zip).value = home.zip;
-    if (document.querySelector(selectors.phone)) document.querySelector(selectors.phone).value = home.phone;
+    if (document.querySelector(selectors.phone)) document.querySelector(selectors.phone).value = formatPhone(home.phone);
+  }
+
+  // Format phone as XXX-XXX-XXXX
+  function formatPhone(phone) {
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return match[1] + '-' + match[2] + '-' + match[3];
+    }
+    return phone;
   }
 
   function injectDropdown() {
