@@ -57,28 +57,16 @@
         'input[name="shippingAddress[company]"]'
       ]),
       address1: getField([
+        '#addressLine1Input',
         'input[name="shippingAddress.addressLine1"]', 
         'input[name="shippingAddress[addressLine1]"]',
-        'input[name="address1"]',
-        'input[name="street_1"]',
-        'input[name="street1"]',
-        'input[id*="street_1"]',
-        'input[id*="street-1"]',
-        'input[id*="addressLine1"]',
-        'input[placeholder*="Street address"]',
-        'input[placeholder*="Address Line 1"]'
+        'input[id*="addressLine1"]'
       ]),
       address2: getField([
+        '#addressLine2Input',
         'input[name="shippingAddress.addressLine2"]', 
         'input[name="shippingAddress[addressLine2]"]',
-        'input[name="address2"]',
-        'input[name="street_2"]',
-        'input[name="street2"]',
-        'input[id*="street_2"]',
-        'input[id*="street-2"]',
-        'input[id*="addressLine2"]',
-        'input[placeholder*="Apartment"]',
-        'input[placeholder*="Address Line 2"]'
+        'input[id*="addressLine2"]'
       ]),
       city: getField([
         'input[name="shippingAddress.city"]', 
@@ -114,22 +102,28 @@
       function setFieldValue(field, value) {
         if (!field) return;
         
-        // Set the value
-        field.value = value;
+        // Use the native HTMLInputElement/HTMLSelectElement setter to bypass React
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype, 
+          'value'
+        )?.set;
+        const nativeSelectValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLSelectElement.prototype, 
+          'value'
+        )?.set;
         
-        // For React-controlled inputs, we need to override the setter
-        const descriptor = Object.getOwnPropertyDescriptor(field, 'value') || 
-                          Object.getOwnPropertyDescriptor(Object.getPrototypeOf(field), 'value');
-        if (descriptor && descriptor.set) {
-          descriptor.set.call(field, value);
+        if (field.tagName === 'SELECT' && nativeSelectValueSetter) {
+          nativeSelectValueSetter.call(field, value);
+        } else if (nativeInputValueSetter) {
+          nativeInputValueSetter.call(field, value);
+        } else {
+          field.value = value;
         }
         
-        // Trigger all necessary events
+        // Trigger events that React listens to
         field.dispatchEvent(new Event('input', { bubbles: true }));
         field.dispatchEvent(new Event('change', { bubbles: true }));
         field.dispatchEvent(new Event('blur', { bubbles: true }));
-        field.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
-        field.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
       }
 
       if (fields.company) {
