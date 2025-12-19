@@ -30,24 +30,41 @@
   FUNERAL_HOMES.sort((a, b) => a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }));
 
   function fillShipping(home) {
-    const selectors = {
-      company: 'input[name="shippingAddress.company"]',
-      address1: 'input[name="shippingAddress.addressLine1"]',
-      address2: 'input[name="shippingAddress.addressLine2"]',
-      city: 'input[name="shippingAddress.city"]',
-      state: 'select[name="shippingAddress.stateOrProvince"]',
-      zip: 'input[name="shippingAddress.postalCode"]',
-      phone: 'input[name="shippingAddress.phone"]'
+    // Helper function to find field with multiple selector attempts
+    function getField(selectors) {
+      for (let selector of selectors) {
+        const field = document.querySelector(selector);
+        if (field) return field;
+      }
+      return null;
+    }
+
+    const fields = {
+      company: getField(['input[name="shippingAddress.company"]', 'input[name="shippingAddress[company]"]']),
+      address1: getField(['input[name="shippingAddress.addressLine1"]', 'input[name="shippingAddress[addressLine1]"]']),
+      address2: getField(['input[name="shippingAddress.addressLine2"]', 'input[name="shippingAddress[addressLine2]"]']),
+      city: getField(['input[name="shippingAddress.city"]', 'input[name="shippingAddress[city]"]']),
+      state: getField(['select[name="shippingAddress.stateOrProvince"]', 'select[name="shippingAddress[stateOrProvince]"]', 'select[name="shippingAddress.stateOrProvinceCode"]', 'select[name="shippingAddress[stateOrProvinceCode]"]']),
+      zip: getField(['input[name="shippingAddress.postalCode"]', 'input[name="shippingAddress[postalCode]"]']),
+      phone: getField(['input[name="shippingAddress.phone"]', 'input[name="shippingAddress[phone]"]'])
     };
 
-    // Only autofill company, address, city, state, zip, phone (not first name)
-    if (document.querySelector(selectors.company)) document.querySelector(selectors.company).value = home.company;
-    if (document.querySelector(selectors.address1)) document.querySelector(selectors.address1).value = home.address1;
-    if (home.address2 && document.querySelector(selectors.address2)) document.querySelector(selectors.address2).value = home.address2;
-    if (document.querySelector(selectors.city)) document.querySelector(selectors.city).value = home.city;
-    if (document.querySelector(selectors.state)) document.querySelector(selectors.state).value = home.state;
-    if (document.querySelector(selectors.zip)) document.querySelector(selectors.zip).value = home.zip;
-    if (document.querySelector(selectors.phone)) document.querySelector(selectors.phone).value = formatPhone(home.phone);
+    // Autofill all fields
+    if (fields.company) fields.company.value = home.company;
+    if (fields.address1) fields.address1.value = home.address1;
+    if (home.address2 && fields.address2) fields.address2.value = home.address2;
+    if (fields.city) fields.city.value = home.city;
+    if (fields.state) fields.state.value = home.state;
+    if (fields.zip) fields.zip.value = home.zip;
+    if (fields.phone) fields.phone.value = formatPhone(home.phone);
+
+    // Trigger change events to ensure BigCommerce registers the values
+    Object.values(fields).forEach(field => {
+      if (field) {
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
   }
 
   // Format phone as XXX-XXX-XXXX
