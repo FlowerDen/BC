@@ -34,37 +34,100 @@
     function getField(selectors) {
       for (let selector of selectors) {
         const field = document.querySelector(selector);
-        if (field) return field;
+        if (field) {
+          console.log('Found field with selector:', selector);
+          return field;
+        }
       }
+      console.warn('Field not found. Tried selectors:', selectors);
       return null;
     }
 
     const fields = {
-      company: getField(['input[name="shippingAddress.company"]', 'input[name="shippingAddress[company]"]']),
-      address1: getField(['input[name="shippingAddress.addressLine1"]', 'input[name="shippingAddress[addressLine1]"]']),
-      address2: getField(['input[name="shippingAddress.addressLine2"]', 'input[name="shippingAddress[addressLine2]"]']),
-      city: getField(['input[name="shippingAddress.city"]', 'input[name="shippingAddress[city]"]']),
-      state: getField(['select[name="shippingAddress.stateOrProvince"]', 'select[name="shippingAddress[stateOrProvince]"]', 'select[name="shippingAddress.stateOrProvinceCode"]', 'select[name="shippingAddress[stateOrProvinceCode]"]']),
-      zip: getField(['input[name="shippingAddress.postalCode"]', 'input[name="shippingAddress[postalCode]"]']),
-      phone: getField(['input[name="shippingAddress.phone"]', 'input[name="shippingAddress[phone]"]'])
+      company: getField([
+        'input[name="shippingAddress.company"]', 
+        'input[name="shippingAddress[company]"]',
+        '#addressLine1Input'
+      ]),
+      address1: getField([
+        'input[name="shippingAddress.addressLine1"]', 
+        'input[name="shippingAddress[addressLine1]"]',
+        'input[name="address1"]',
+        'input[id*="addressLine1"]',
+        'input[placeholder*="Address"]'
+      ]),
+      address2: getField([
+        'input[name="shippingAddress.addressLine2"]', 
+        'input[name="shippingAddress[addressLine2]"]',
+        'input[name="address2"]',
+        'input[id*="addressLine2"]',
+        'input[placeholder*="Apartment"]'
+      ]),
+      city: getField([
+        'input[name="shippingAddress.city"]', 
+        'input[name="shippingAddress[city]"]'
+      ]),
+      state: getField([
+        'select[name="shippingAddress.stateOrProvince"]', 
+        'select[name="shippingAddress[stateOrProvince]"]', 
+        'select[name="shippingAddress.stateOrProvinceCode"]', 
+        'select[name="shippingAddress[stateOrProvinceCode]"]',
+        'select[name="provinceCode"]',
+        'select[id*="stateOrProvince"]'
+      ]),
+      zip: getField([
+        'input[name="shippingAddress.postalCode"]', 
+        'input[name="shippingAddress[postalCode]"]'
+      ]),
+      phone: getField([
+        'input[name="shippingAddress.phone"]', 
+        'input[name="shippingAddress[phone]"]'
+      ])
     };
 
-    // Autofill all fields
-    if (fields.company) fields.company.value = home.company;
-    if (fields.address1) fields.address1.value = home.address1;
-    if (home.address2 && fields.address2) fields.address2.value = home.address2;
-    if (fields.city) fields.city.value = home.city;
-    if (fields.state) fields.state.value = home.state;
-    if (fields.zip) fields.zip.value = home.zip;
-    if (fields.phone) fields.phone.value = formatPhone(home.phone);
+    console.log('Autofilling with:', home);
+    console.log('Fields found:', Object.keys(fields).filter(k => fields[k]));
 
-    // Trigger change events to ensure BigCommerce registers the values
-    Object.values(fields).forEach(field => {
-      if (field) {
-        field.dispatchEvent(new Event('input', { bubbles: true }));
-        field.dispatchEvent(new Event('change', { bubbles: true }));
+    // Autofill all fields with a slight delay to ensure rendering
+    setTimeout(() => {
+      if (fields.company) {
+        fields.company.value = home.company;
+        fields.company.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.company.dispatchEvent(new Event('change', { bubbles: true }));
       }
-    });
+      if (fields.address1) {
+        fields.address1.value = home.address1;
+        fields.address1.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.address1.dispatchEvent(new Event('change', { bubbles: true }));
+        fields.address1.dispatchEvent(new Event('blur', { bubbles: true }));
+      }
+      if (home.address2 && fields.address2) {
+        fields.address2.value = home.address2;
+        fields.address2.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.address2.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.city) {
+        fields.city.value = home.city;
+        fields.city.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.city.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.state) {
+        fields.state.value = home.state;
+        fields.state.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.state.dispatchEvent(new Event('change', { bubbles: true }));
+        fields.state.dispatchEvent(new Event('blur', { bubbles: true }));
+      }
+      if (fields.zip) {
+        fields.zip.value = home.zip;
+        fields.zip.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.zip.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (fields.phone) {
+        fields.phone.value = formatPhone(home.phone);
+        fields.phone.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.phone.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, 100);
   }
 
   // Format phone as XXX-XXX-XXXX
