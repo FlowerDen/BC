@@ -33,6 +33,7 @@
     const selectors = {
       company: 'input[name="shippingAddress.company"]',
       address1: 'input[name="shippingAddress.addressLine1"]',
+      address2: 'input[name="shippingAddress.addressLine2"]',
       city: 'input[name="shippingAddress.city"]',
       state: 'select[name="shippingAddress.stateOrProvince"]',
       zip: 'input[name="shippingAddress.postalCode"]',
@@ -42,6 +43,7 @@
     // Only autofill company, address, city, state, zip, phone (not first name)
     if (document.querySelector(selectors.company)) document.querySelector(selectors.company).value = home.company;
     if (document.querySelector(selectors.address1)) document.querySelector(selectors.address1).value = home.address1;
+    if (home.address2 && document.querySelector(selectors.address2)) document.querySelector(selectors.address2).value = home.address2;
     if (document.querySelector(selectors.city)) document.querySelector(selectors.city).value = home.city;
     if (document.querySelector(selectors.state)) document.querySelector(selectors.state).value = home.state;
     if (document.querySelector(selectors.zip)) document.querySelector(selectors.zip).value = home.zip;
@@ -61,8 +63,8 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
-    const firstNameInput = document.querySelector('input[name="shippingAddress.firstName"]');
-    if (!firstNameInput) return;
+    const countrySelect = document.querySelector('select[name="shippingAddress.countryCode"]');
+    if (!countrySelect) return;
 
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '16px';
@@ -90,8 +92,8 @@
     wrapper.appendChild(label);
     wrapper.appendChild(select);
 
-    // Insert dropdown BEFORE First Name field
-    const fieldWrapper = firstNameInput.closest('[class*="form"], div') || firstNameInput.parentNode;
+    // Insert dropdown BEFORE Country field
+    const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
     fieldWrapper.parentNode.insertBefore(wrapper, fieldWrapper);
   }
 
