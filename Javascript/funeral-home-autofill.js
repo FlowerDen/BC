@@ -218,6 +218,15 @@
     noButton.style.cursor = 'pointer';
     noButton.style.fontWeight = '500';
 
+    // Instruction text (initially hidden)
+    const instructionText = document.createElement('p');
+    instructionText.textContent = 'Please enter deceased first and name for the delivery information';
+    instructionText.style.display = 'none';
+    instructionText.style.color = '#0066cc';
+    instructionText.style.fontStyle = 'italic';
+    instructionText.style.marginBottom = '12px';
+    instructionText.style.marginTop = '8px';
+
     // Dropdown container (initially hidden)
     const dropdownContainer = document.createElement('div');
     dropdownContainer.style.display = 'none';
@@ -253,6 +262,7 @@
       noButton.style.backgroundColor = '#fff';
       noButton.style.color = '#000';
       noButton.style.borderColor = '#ccc';
+      instructionText.style.display = 'block';
       dropdownContainer.style.display = 'block';
     });
 
@@ -263,6 +273,7 @@
       yesButton.style.backgroundColor = '#fff';
       yesButton.style.color = '#000';
       yesButton.style.borderColor = '#ccc';
+      instructionText.style.display = 'none';
       dropdownContainer.style.display = 'none';
       select.value = '';
     });
@@ -272,6 +283,7 @@
 
     wrapper.appendChild(questionLabel);
     wrapper.appendChild(buttonContainer);
+    wrapper.appendChild(instructionText);
     wrapper.appendChild(dropdownContainer);
 
     // Find the country label and insert before it
