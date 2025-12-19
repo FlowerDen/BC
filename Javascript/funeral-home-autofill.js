@@ -211,9 +211,10 @@
     noButton.type = 'button';
     noButton.textContent = 'No';
     noButton.style.padding = '8px 20px';
-    noButton.style.border = '2px solid #ccc';
+    noButton.style.border = '2px solid #dc3545';
     noButton.style.borderRadius = '4px';
-    noButton.style.backgroundColor = '#fff';
+    noButton.style.backgroundColor = '#dc3545';
+    noButton.style.color = '#fff';
     noButton.style.cursor = 'pointer';
     noButton.style.fontWeight = '500';
 
@@ -273,9 +274,17 @@
     wrapper.appendChild(buttonContainer);
     wrapper.appendChild(dropdownContainer);
 
-    // Insert dropdown BEFORE Country field
+    // Find the country label and insert before it
+    const countryLabel = document.querySelector('label[for*="country"], label');
     const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
-    fieldWrapper.parentNode.insertBefore(wrapper, fieldWrapper);
+    
+    // Insert at the very top of the delivery address section, before country
+    if (countryLabel && fieldWrapper.contains(countryLabel)) {
+      fieldWrapper.insertBefore(wrapper, countryLabel);
+    } else {
+      fieldWrapper.parentNode.insertBefore(wrapper, fieldWrapper);
+    }
+    
     console.log('Dropdown injected successfully');
   }
 
