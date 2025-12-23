@@ -4,6 +4,83 @@
  * Automatically loads Flatpickr library if not already present
  */
 
+// Inject date picker styling
+function injectDatePickerCSS() {
+  if (document.getElementById('florist-date-picker-styles')) {
+    return; // Already injected
+  }
+  
+  const style = document.createElement('style');
+  style.id = 'florist-date-picker-styles';
+  style.textContent = `
+    .date-picker-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    #CalendarTrigger {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: flex-start;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    #CalendarTrigger:hover {
+      background-color: #f3f3f3;
+      border-color: #bbb;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    #CalendarTrigger:active {
+      background-color: #eaeaea;
+    }
+
+    /* Sunday visual cue */
+    #CalendarTrigger.sunday {
+      background-color: #fff0bf7d;
+      color: #444;
+      border-color: #aaa;
+      font-style: italic;
+    }
+
+    /* Holiday styling */
+    .flatpickr-day.disabled.holiday {
+      position: relative;
+      background: #ffe6e6 !important;
+      color: #999 !important;
+      cursor: not-allowed;
+    }
+
+    .flatpickr-day.disabled.holiday:hover::after {
+      content: "Holiday (Closed)";
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 5px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 9999;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 // Load Flatpickr CSS if not already loaded
 function loadFlatpickrCSS() {
   if (document.querySelector('link[href*="flatpickr"]')) {
@@ -35,6 +112,9 @@ function loadFlatpickrJS() {
 
 // Initialize date picker after Flatpickr is loaded
 async function initializeDatePicker() {
+  // Inject custom CSS
+  injectDatePickerCSS();
+  
   // Load dependencies
   await loadFlatpickrCSS();
   await loadFlatpickrJS();
@@ -44,7 +124,7 @@ async function initializeDatePicker() {
     await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
   }
 
-  // Now initialize the date picker logic
+  // Initialize the date picker logic
 
   const hiddenDay = document.getElementById("EventDateDay");
   const hiddenMonth = document.getElementById("EventDateMonth");
