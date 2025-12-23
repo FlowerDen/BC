@@ -1,11 +1,56 @@
 /**
  * Florist Date Picker Logic
  * Handles delivery date blocking for holidays, Sundays, and time cutoffs
+ * Automatically loads Flatpickr library if not already present
  */
 
-document.addEventListener("DOMContentLoaded", function () {
+// Load Flatpickr CSS if not already loaded
+function loadFlatpickrCSS() {
+  if (document.querySelector('link[href*="flatpickr"]')) {
+    return Promise.resolve(); // Already loaded
+  }
+  
+  return new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css';
+    link.onload = resolve;
+    document.head.appendChild(link);
+  });
+}
+
+// Load Flatpickr JS if not already loaded
+function loadFlatpickrJS() {
+  if (window.flatpickr) {
+    return Promise.resolve(); // Already loaded
+  }
+  
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/flatpickr';
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+
+// Initialize date picker after Flatpickr is loaded
+async function initializeDatePicker() {
+  // Load dependencies
+  await loadFlatpickrCSS();
+  await loadFlatpickrJS();
+
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+  }
+
+  // Now initialize the date picker logic
 
   const hiddenDay = document.getElementById("EventDateDay");
+  const hiddenMonth = document.getElementById("EventDateMonth");
+  const hiddenYear = document.getElementById("EventDateYear");
+  const triggerButton = document.getElementById("CalendarTrigger");
+  const dateInput = document.getElementById("EventDate");
   const hiddenMonth = document.getElementById("EventDateMonth");
   const hiddenYear = document.getElementById("EventDateYear");
   const triggerButton = document.getElementById("CalendarTrigger");
@@ -176,4 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
   triggerButton.addEventListener("click", () => picker.open());
 
   updateBigCommerceFields(defaultDate);
-});
+}
+
+// Start initialization
+initializeDatePicker();
