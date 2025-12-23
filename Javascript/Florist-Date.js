@@ -131,10 +131,6 @@ async function initializeDatePicker() {
   const hiddenYear = document.getElementById("EventDateYear");
   const triggerButton = document.getElementById("CalendarTrigger");
   const dateInput = document.getElementById("EventDate");
-  const hiddenMonth = document.getElementById("EventDateMonth");
-  const hiddenYear = document.getElementById("EventDateYear");
-  const triggerButton = document.getElementById("CalendarTrigger");
-  const dateInput = document.getElementById("EventDate");
 
   // Check if elements exist before proceeding
   if (!hiddenDay || !hiddenMonth || !hiddenYear || !triggerButton || !dateInput) {
