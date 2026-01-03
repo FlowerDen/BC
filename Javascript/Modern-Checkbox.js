@@ -44,7 +44,7 @@ function injectCheckboxCSS() {
       border-radius: 50%;
       background-color: white;
       top: 3px;
-      left: 3px;
+      left: 3px !important;
       transition: left 0.3s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
