@@ -33,17 +33,18 @@ function injectCheckboxCSS() {
       border-radius: 12px;
       position: relative;
       transition: background-color 0.3s ease;
+      box-sizing: border-box;
     }
 
     .fd-toggle-slider::before {
       content: '';
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background-color: white;
-      top: 2px;
-      left: 2px;
+      top: 3px;
+      left: 3px;
       transition: left 0.3s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
@@ -53,7 +54,7 @@ function injectCheckboxCSS() {
     }
 
     .fd-toggle input[type="checkbox"]:checked ~ .fd-toggle-slider::before {
-      left: 22px;
+      left: 23px;
     }
 
     .fd-toggle-text {
