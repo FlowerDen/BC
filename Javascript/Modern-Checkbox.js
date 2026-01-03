@@ -43,7 +43,7 @@ function injectCheckboxCSS() {
       height: 18px;
       border-radius: 50%;
       background-color: white;
-      top: 3px;
+      top: 3px !important;
       left: 3px !important;
       transition: left 0.3s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -54,7 +54,7 @@ function injectCheckboxCSS() {
     }
 
     .fd-toggle input[type="checkbox"]:checked ~ .fd-toggle-slider::before {
-      left: 23px;
+      left: 23px !important;
     }
 
     .fd-toggle-text {
