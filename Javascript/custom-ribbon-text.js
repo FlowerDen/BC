@@ -1,6 +1,11 @@
 // ---------------- Custom Ribbon: Show/Hide Text Field -----------------
 (function () {
 
+    // Add CSS to hide the field
+    const style = document.createElement('style');
+    style.textContent = '.custom-ribbon-hidden { display: none !important; }';
+    document.head.appendChild(style);
+
     function initCustomRibbon() {
 
         // Find the Custom Ribbon checkbox field (AJAX-safe)
