@@ -1,40 +1,57 @@
 // ---------------- Custom Ribbon: Show/Hide Text Field -----------------
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
 
-    const ribbonField = Array.from(
-        document.querySelectorAll('[data-product-attribute="input-checkbox"]')
-    ).find(f => f.innerText.toLowerCase().includes("custom ribbon"));
+    function initCustomRibbon() {
 
-    if (!ribbonField) return;
+        // Find the Custom Ribbon checkbox field (AJAX-safe)
+        const ribbonField = [...document.querySelectorAll('[data-product-attribute]')]
+            .find(f => f.innerText.toLowerCase().includes("custom ribbon"));
 
-    const original = ribbonField.querySelector('input.form-checkbox');
-    if (!original) return;
+        if (!ribbonField) return false;
 
-    // Theme slider
-    const sliderToggle = ribbonField.querySelector('.styled-switch input[type="checkbox"]');
+        // Use the real checkbox, regardless of theme styling
+        const checkbox = ribbonField.querySelector('input[type="checkbox"]');
+        if (!checkbox) return false;
 
-    const ribbonTextField = Array.from(
-        document.querySelectorAll('[data-product-attribute="input-text"]')
-    ).find(f => f.innerText.toLowerCase().includes("custom ribbon text"));
+        // Find the Custom Ribbon Text field
+        const ribbonTextField = [...document.querySelectorAll('[data-product-attribute]')]
+            .find(f => f.innerText.toLowerCase().includes("custom ribbon text"));
 
-    if (!ribbonTextField) return;
+        if (!ribbonTextField) return false;
 
-    const ribbonTextInput = ribbonTextField.querySelector("input");
+        const ribbonTextInput = ribbonTextField.querySelector("input");
+        if (!ribbonTextInput) return false;
 
-    function update() {
-        if (original.checked) {
-            ribbonTextField.style.display = "block";
-            ribbonTextInput.required = true;
-        } else {
-            ribbonTextField.style.display = "none";
-            ribbonTextInput.required = false;
-            ribbonTextInput.value = "";
+        function update() {
+            const enabled = checkbox.checked;
+
+            ribbonTextField.classList.toggle("custom-ribbon-hidden", !enabled);
+            ribbonTextInput.required = enabled;
+
+            if (!enabled) {
+                ribbonTextInput.value = "";
+            }
         }
+
+        // Initial state
+        update();
+
+        // Single source of truth
+        checkbox.addEventListener("change", update);
+
+        return true;
     }
 
-    update();
+    // Observe DOM until product options exist
+    const observer = new MutationObserver(() => {
+        if (initCustomRibbon()) {
+            observer.disconnect();
+        }
+    });
 
-    // Listen to BOTH so nothing breaks
-    original.addEventListener("change", update);
-    if (sliderToggle) sliderToggle.addEventListener("change", update);
-});
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+})();
