@@ -8,14 +8,13 @@
 
     function initCustomRibbon() {
 
-        // Find the Custom Ribbon checkbox field (AJAX-safe)
-        const ribbonField = [...document.querySelectorAll('[data-product-attribute]')]
-            .find(f => f.innerText.toLowerCase().includes("custom ribbon"));
+        // Find the Custom Ribbon checkbox by searching all checkboxes
+        const checkbox = [...document.querySelectorAll('input[type="checkbox"]')]
+            .find(cb => {
+                const container = cb.closest('[data-product-attribute]') || cb.parentElement;
+                return container && container.innerText.toLowerCase().includes("custom ribbon");
+            });
 
-        if (!ribbonField) return false;
-
-        // Use the real checkbox, regardless of theme styling
-        const checkbox = ribbonField.querySelector('input[type="checkbox"]');
         if (!checkbox) return false;
 
         // Find the Custom Ribbon Text field
