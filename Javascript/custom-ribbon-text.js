@@ -40,8 +40,10 @@
         // Initial state
         update();
 
-        // Single source of truth
-        checkbox.addEventListener("change", update);
+        // Use click event with delay to avoid interfering with BigCommerce price updates
+        checkbox.addEventListener("click", () => {
+            setTimeout(update, 10);
+        });
 
         return true;
     }
