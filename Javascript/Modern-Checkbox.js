@@ -133,13 +133,9 @@ async function initializeCheckboxes() {
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
 
     // Sync UI toggle → original (for form submission)
-    // CHANGED: Use 'click' instead of 'change' to avoid blocking BigCommerce handlers
-    toggleCheckbox.addEventListener('click', () => {
-      // Small delay to let checkbox state update first
-      setTimeout(() => {
-        checkbox.checked = toggleCheckbox.checked;
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }, 10);
+    toggleCheckbox.addEventListener('change', () => {
+      checkbox.checked = toggleCheckbox.checked;
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     // Sync original → UI toggle (in case BC triggers changes)
