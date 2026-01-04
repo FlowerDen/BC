@@ -136,9 +136,17 @@ async function initializeCheckboxes() {
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire change event on the checkbox to trigger theme's backup code
-      // Theme code will then dispatch to [data-product-option-change] for BigCommerce
-      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      // Directly trigger theme's backup price update logic
+      // Skip firing event on checkbox to avoid Omnisend seeing malformed events
+      const form = checkbox.closest('form[data-cart-item-add]');
+      if (form) {
+        const optionChangeDiv = form.querySelector('[data-product-option-change]');
+        if (optionChangeDiv) {
+          // Dispatch to the option change div like theme backup code does
+          const event = new Event('change', { bubbles: true });
+          optionChangeDiv.dispatchEvent(event);
+        }
+      }
     });
   });
 }
