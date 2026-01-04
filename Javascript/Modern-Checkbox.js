@@ -137,14 +137,23 @@ async function initializeCheckboxes() {
       checkbox.checked = toggleCheckbox.checked;
       
       // Directly trigger theme's backup price update logic
-      // Skip firing event on checkbox to avoid Omnisend seeing malformed events
+      // Use a custom event that won't bubble to Omnisend
       const form = checkbox.closest('form[data-cart-item-add]');
       if (form) {
         const optionChangeDiv = form.querySelector('[data-product-option-change]');
         if (optionChangeDiv) {
-          // Dispatch to the option change div like theme backup code does
-          const event = new Event('change', { bubbles: true });
+          // Create event that doesn't bubble to avoid Omnisend
+          const event = new Event('change', { bubbles: false });
           optionChangeDiv.dispatchEvent(event);
+          
+          // Also manually trigger BigCommerce price update via Utils
+          if (window.stencilUtils && window.stencilUtils.api && window.stencilUtils.api.productAttributes) {
+            const formData = new FormData(form);
+            const productId = form.querySelector('[name="product_id"]')?.value;
+            if (productId) {
+              window.stencilUtils.api.productAttributes.optionChange(productId, formData);
+            }
+          }
         }
       }
     });
