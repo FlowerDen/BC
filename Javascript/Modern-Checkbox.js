@@ -137,29 +137,18 @@ async function initializeCheckboxes() {
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
       
-      // Manually trigger BigCommerce price update
-      const form = checkbox.closest('form');
-      if (form && window.stencilUtils) {
-        // Find product ID from form or meta tags
-        const productId = form.querySelector('[name="product_id"]')?.value 
-          || form.dataset.productId 
-          || document.querySelector('[data-product-id]')?.dataset.productId
-          || document.querySelector('input[name="product_id"]')?.value;
-          
-        if (productId) {
-          const formData = new FormData(form);
-          window.stencilUtils.api.productAttributes.optionChange(
-            productId,
-            formData,
-            'product/bulk-discount-rates',
-            (err, response) => {
-              if (!err && response) {
-                // Price update handled by BigCommerce
-              }
-            }
-          );
+      // Trigger a delayed custom event to force price update without Omnisend interference
+      setTimeout(() => {
+        const form = checkbox.closest('form');
+        if (form) {
+          // Trigger jQuery change event if available (for theme backup code)
+          if (window.$ && window.$(form).data('product-attribute-change')) {
+            window.$(form).trigger('product-attribute-change');
+          }
+          // Also dispatch native event as fallback
+          form.dispatchEvent(new Event('change', { bubbles: true }));
         }
-      }
+      }, 50);
     });
   });
 }
