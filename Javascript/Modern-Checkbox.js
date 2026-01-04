@@ -136,6 +136,22 @@ async function initializeCheckboxes() {
     // One-way sync to avoid triggering events that interfere with BigCommerce/Omnisend
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
+      
+      // Manually trigger BigCommerce price update
+      const form = checkbox.closest('form');
+      if (form && window.stencilUtils) {
+        const formData = new FormData(form);
+        window.stencilUtils.api.productAttributes.optionChange(
+          form.dataset.productId || document.querySelector('[data-product-id]')?.dataset.productId,
+          formData,
+          'product/bulk-discount-rates',
+          (err, response) => {
+            if (!err && response) {
+              // Price update handled by BigCommerce
+            }
+          }
+        );
+      }
     });
   });
 }
