@@ -6,47 +6,38 @@
     style.textContent = '.custom-ribbon-hidden { display: none !important; }';
     document.head.appendChild(style);
 
+    let attemptCount = 0;
+    const maxAttempts = 50;
+
     function initCustomRibbon() {
-        console.log("Searching for Custom Ribbon checkbox...");
+        attemptCount++;
 
         // Find the Custom Ribbon checkbox by searching all checkboxes
         const checkbox = [...document.querySelectorAll('input[type="checkbox"]')]
             .find(cb => {
                 const container = cb.closest('[data-product-attribute]') || cb.parentElement;
-                const text = container ? container.innerText.toLowerCase() : '';
-                console.log("Checking container text:", text);
-                return text.includes("custom ribbon") && !text.includes("text");
+                return container && container.innerText.toLowerCase().includes("custom ribbon");
             });
 
         if (!checkbox) {
-            console.log("Custom Ribbon checkbox not found");
+            if (attemptCount >= maxAttempts) {
+                console.log("Custom Ribbon checkbox not found after " + maxAttempts + " attempts. Stopping observer.");
+                return true; // Stop observer
+            }
             return false;
         }
-        console.log("✓ Custom Ribbon checkbox found:", checkbox);
 
         // Find the Custom Ribbon Text field
         const ribbonTextField = [...document.querySelectorAll('[data-product-attribute]')]
-            .find(f => {
-                const text = f.innerText.toLowerCase();
-                return text.includes("custom ribbon text");
-            });
+            .find(f => f.innerText.toLowerCase().includes("custom ribbon text"));
 
-        if (!ribbonTextField) {
-            console.log("Custom Ribbon Text field not found");
-            return false;
-        }
-        console.log("✓ Custom Ribbon Text field found:", ribbonTextField);
+        if (!ribbonTextField) return false;
 
         const ribbonTextInput = ribbonTextField.querySelector("input");
-        if (!ribbonTextInput) {
-            console.log("Custom Ribbon Text input not found");
-            return false;
-        }
-        console.log("✓ Custom Ribbon Text input found:", ribbonTextInput);
+        if (!ribbonTextInput) return false;
 
         function update() {
             const enabled = checkbox.checked;
-            console.log("Update called - checkbox checked:", enabled);
 
             ribbonTextField.classList.toggle("custom-ribbon-hidden", !enabled);
             ribbonTextInput.required = enabled;
@@ -54,29 +45,15 @@
             if (!enabled) {
                 ribbonTextInput.value = "";
             }
-            console.log("Field visibility:", enabled ? "visible" : "hidden");
         }
 
-        // Set initial state based on current checkbox value
-        const initialState = checkbox.checked;
-        console.log("Initial checkbox state:", initialState);
-        
-        if (initialState) {
-            ribbonTextField.classList.remove("custom-ribbon-hidden");
-            ribbonTextInput.required = true;
-        } else {
-            ribbonTextField.classList.add("custom-ribbon-hidden");
-            ribbonTextInput.required = false;
-        }
-        console.log("Initial state set - field", initialState ? "visible" : "hidden");
+        // Initial state
+        update();
 
-        // Use CLICK instead of CHANGE to avoid interfering with BigCommerce's event chain
-        checkbox.addEventListener("click", () => {
-            console.log("Checkbox clicked event fired");
-            setTimeout(update, 10);
-        });
+        // Use click event to avoid blocking BigCommerce's change handler
+        checkbox.addEventListener("click", update);
 
-        console.log("Event listeners attached");
+        console.log("Custom Ribbon initialized successfully");
         return true;
     }
 
@@ -84,7 +61,6 @@
     const observer = new MutationObserver(() => {
         if (initCustomRibbon()) {
             observer.disconnect();
-            console.log("✅ Custom Ribbon initialization complete");
         }
     });
 
@@ -92,7 +68,5 @@
         childList: true,
         subtree: true
     });
-
-    console.log("Custom Ribbon observer started");
 
 })();
