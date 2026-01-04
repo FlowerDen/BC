@@ -132,15 +132,10 @@ async function initializeCheckboxes() {
     // Get references to both checkboxes
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
 
-    // Sync UI toggle → original (for form submission)
+    // Sync UI toggle → original (for form submission only)
+    // One-way sync to avoid triggering events that interfere with BigCommerce/Omnisend
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
-      // Don't trigger synthetic events - let BigCommerce detect the change naturally
-    });
-
-    // Sync original → UI toggle (in case BC triggers changes)
-    checkbox.addEventListener('change', () => {
-      toggleCheckbox.checked = checkbox.checked;
     });
   });
 }
