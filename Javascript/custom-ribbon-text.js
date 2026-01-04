@@ -50,7 +50,11 @@
         // Initial state
         update();
 
-        // Use click event to avoid blocking BigCommerce's change handler
+        // Watch for checkbox state changes using MutationObserver (works with Modern-Checkbox.js)
+        const observer = new MutationObserver(update);
+        observer.observe(checkbox, { attributes: true, attributeFilter: ['checked'] });
+
+        // Also listen to click events as fallback
         checkbox.addEventListener("click", update);
 
         console.log("Custom Ribbon initialized successfully");
