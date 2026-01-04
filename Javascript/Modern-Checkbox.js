@@ -132,21 +132,10 @@ async function initializeCheckboxes() {
     // Get references to both checkboxes
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
 
-    // Sync UI toggle → original checkbox
+    // Silent sync only - no events, no API calls
+    // BigCommerce will detect the checkbox state naturally on form interactions
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
-      
-      // Trigger BigCommerce price update via stencilUtils API
-      const form = checkbox.closest('form[data-cart-item-add]');
-      if (form && window.stencilUtils && window.stencilUtils.api && window.stencilUtils.api.productAttributes) {
-        const formData = new FormData(form);
-        const productId = form.querySelector('[name="product_id"]')?.value;
-        if (productId) {
-          window.stencilUtils.api.productAttributes.optionChange(productId, formData, (err, response) => {
-            // Price update handled by BigCommerce
-          });
-        }
-      }
     });
   });
 }
