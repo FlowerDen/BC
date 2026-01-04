@@ -140,17 +140,25 @@ async function initializeCheckboxes() {
       // Manually trigger BigCommerce price update
       const form = checkbox.closest('form');
       if (form && window.stencilUtils) {
-        const formData = new FormData(form);
-        window.stencilUtils.api.productAttributes.optionChange(
-          form.dataset.productId || document.querySelector('[data-product-id]')?.dataset.productId,
-          formData,
-          'product/bulk-discount-rates',
-          (err, response) => {
-            if (!err && response) {
-              // Price update handled by BigCommerce
+        // Find product ID from form or meta tags
+        const productId = form.querySelector('[name="product_id"]')?.value 
+          || form.dataset.productId 
+          || document.querySelector('[data-product-id]')?.dataset.productId
+          || document.querySelector('input[name="product_id"]')?.value;
+          
+        if (productId) {
+          const formData = new FormData(form);
+          window.stencilUtils.api.productAttributes.optionChange(
+            productId,
+            formData,
+            'product/bulk-discount-rates',
+            (err, response) => {
+              if (!err && response) {
+                // Price update handled by BigCommerce
+              }
             }
-          }
-        );
+          );
+        }
       }
     });
   });
