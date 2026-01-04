@@ -135,8 +135,7 @@ async function initializeCheckboxes() {
     // Sync UI toggle → original (for form submission)
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
-      // Trigger native click on the original checkbox for BigCommerce compatibility
-      checkbox.click();
+      // Don't trigger synthetic events - let BigCommerce detect the change naturally
     });
 
     // Sync original → UI toggle (in case BC triggers changes)
