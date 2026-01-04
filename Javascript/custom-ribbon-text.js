@@ -1,106 +1,90 @@
-// ---------------- Custom Ribbon: Show/Hide Text Field -----------------
-(function () {
+// ==UserScript==
+// @name         BC Custom Ribbon Text
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Custom Ribbon Text for BC
+// @author       FlowerDen
+// @match        https://bondageprojects.elementfx.com/*
+// @match        https://www.bondageprojects.elementfx.com/*
+// @match        https://bondage-europe.com/*
+// @match        https://www.bondage-europe.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bondageprojects.com
+// @grant        none
+// ==/UserScript==
 
-    // Add CSS to hide the field
-    const style = document.createElement('style');
-    style.textContent = '.custom-ribbon-hidden { display: none !important; }';
-    document.head.appendChild(style);
+(function() {
+    'use strict';
 
-    function initCustomRibbon() {
-        console.log("Searching for Custom Ribbon checkbox...");
+    const INPUT_ID = "RibbonCustomText";
+    const CHECKBOX_ID = "RibbonCustomTextEnabled";
+    const RIBBON_TEXT_KEY = "BC_CustomRibbonText";
+    const RIBBON_ENABLED_KEY = "BC_CustomRibbonTextEnabled";
 
-        // Find the Custom Ribbon checkbox by searching all checkboxes
-        const checkbox = [...document.querySelectorAll('input[type="checkbox"]')]
-            .find(cb => {
-                const container = cb.closest('[data-product-attribute]') || cb.parentElement;
-                const text = container ? container.innerText.toLowerCase() : '';
-                console.log("Checking container text:", text);
-                return text.includes("custom ribbon") && !text.includes("text");
-            });
+    // Create the UI elements
+    function createUI() {
+        const container = document.createElement("div");
+        container.style.cssText = "position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px; z-index: 10000; color: white; font-family: Arial, sans-serif;";
 
-        if (!checkbox) {
-            console.log("Custom Ribbon checkbox not found");
-            return false;
-        }
-        console.log("✓ Custom Ribbon checkbox found:", checkbox);
+        const label = document.createElement("label");
+        label.textContent = "Custom Ribbon Text: ";
+        label.style.marginRight = "5px";
 
-        // Find the Custom Ribbon Text field
-        const ribbonTextField = [...document.querySelectorAll('[data-product-attribute]')]
-            .find(f => {
-                const text = f.innerText.toLowerCase();
-                return text.includes("custom ribbon text");
-            });
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = INPUT_ID;
+        input.value = localStorage.getItem(RIBBON_TEXT_KEY) || "";
+        input.style.cssText = "margin-right: 10px; padding: 2px;";
 
-        if (!ribbonTextField) {
-            console.log("Custom Ribbon Text field not found");
-            return false;
-        }
-        console.log("✓ Custom Ribbon Text field found:", ribbonTextField);
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = CHECKBOX_ID;
+        checkbox.checked = localStorage.getItem(RIBBON_ENABLED_KEY) === "true";
 
-        const ribbonTextInput = ribbonTextField.querySelector("input");
-        if (!ribbonTextInput) {
-            console.log("Custom Ribbon Text input not found");
-            return false;
-        }
-        console.log("✓ Custom Ribbon Text input found:", ribbonTextInput);
+        const checkboxLabel = document.createElement("label");
+        checkboxLabel.textContent = " Enable";
+        checkboxLabel.style.marginLeft = "5px";
 
-        function update() {
-            // Use setTimeout to ensure we get the updated checkbox state
-            setTimeout(() => {
-                const enabled = checkbox.checked;
-                console.log("Update called - checkbox checked:", enabled);
+        container.appendChild(label);
+        container.appendChild(input);
+        container.appendChild(checkbox);
+        container.appendChild(checkboxLabel);
 
-                ribbonTextField.classList.toggle("custom-ribbon-hidden", !enabled);
-                ribbonTextInput.required = enabled;
+        document.body.appendChild(container);
 
-                if (!enabled) {
-                    ribbonTextInput.value = "";
-                }
-                console.log("Field visibility:", enabled ? "visible" : "hidden");
-            }, 0);
-        }
-
-        // Set initial state based on current checkbox value
-        const initialState = checkbox.checked;
-        console.log("Initial checkbox state:", initialState);
-        
-        if (initialState) {
-            ribbonTextField.classList.remove("custom-ribbon-hidden");
-            ribbonTextInput.required = true;
-        } else {
-            ribbonTextField.classList.add("custom-ribbon-hidden");
-            ribbonTextInput.required = false;
-        }
-        console.log("Initial state set - field", initialState ? "visible" : "hidden");
-
-        // Listen to both change and click events
-        checkbox.addEventListener("change", () => {
-            console.log("Checkbox changed event fired");
-            update();
-        });
-
-        checkbox.addEventListener("click", () => {
-            console.log("Checkbox clicked event fired");
-            update();
-        });
-
-        console.log("Event listeners attached");
-        return true;
+        return { input, checkbox };
     }
 
-    // Observe DOM until product options exist
-    const observer = new MutationObserver(() => {
-        if (initCustomRibbon()) {
-            observer.disconnect();
-            console.log("✅ Custom Ribbon initialization complete");
+    // Update the ribbon text
+    function update() {
+        const input = document.getElementById(INPUT_ID);
+        const checkbox = document.getElementById(CHECKBOX_ID);
+
+        if (checkbox && checkbox.checked) {
+            const customText = input ? input.value : "";
+            localStorage.setItem(RIBBON_TEXT_KEY, customText);
+            localStorage.setItem(RIBBON_ENABLED_KEY, "true");
+            if (typeof ChatRoomCharacterViewCharacterName === 'function') {
+                // Force update the character view if available
+                console.log("Custom Ribbon Text enabled:", customText);
+            }
+        } else {
+            localStorage.setItem(RIBBON_ENABLED_KEY, "false");
         }
+    }
+
+    // Initialize
+    const { input, checkbox } = createUI();
+
+    // Add event listeners
+    input.addEventListener("input", () => {
+        localStorage.setItem(RIBBON_TEXT_KEY, input.value);
+        setTimeout(update, 10);
     });
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
+    checkbox.addEventListener("click", () => {
+        setTimeout(update, 10);
     });
 
-    console.log("Custom Ribbon observer started");
-
+    // Initial update
+    update();
 })();
