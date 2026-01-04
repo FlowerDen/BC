@@ -50,12 +50,14 @@
         // Initial state
         update();
 
-        // Watch for checkbox state changes using MutationObserver (works with Modern-Checkbox.js)
-        const observer = new MutationObserver(update);
-        observer.observe(checkbox, { attributes: true, attributeFilter: ['checked'] });
-
-        // Also listen to click events as fallback
-        checkbox.addEventListener("click", update);
+        // Poll checkbox state every 100ms to detect changes from Modern-Checkbox.js
+        let lastState = checkbox.checked;
+        setInterval(() => {
+            if (checkbox.checked !== lastState) {
+                lastState = checkbox.checked;
+                update();
+            }
+        }, 100);
 
         console.log("Custom Ribbon initialized successfully");
         return true;
