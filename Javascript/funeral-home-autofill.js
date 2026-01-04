@@ -221,7 +221,7 @@
 
     // Instruction text (initially hidden)
     const instructionText = document.createElement('p');
-    instructionText.textContent = 'Please enter deceased first and name for the delivery information';
+    instructionText.textContent = 'Please enter deceased first and last name for the delivery information';
     instructionText.style.display = 'none';
     instructionText.style.color = '#0066cc';
     instructionText.style.fontStyle = 'italic';
