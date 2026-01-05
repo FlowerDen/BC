@@ -144,8 +144,19 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire a simple bubbling change event - let BigCommerce handle it naturally
-      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      // Fire NON-BUBBLING change on checkbox for custom-ribbon-text.js
+      checkbox.dispatchEvent(new Event('change', { bubbles: false }));
+      
+      // Manually trigger BigCommerce by dispatching to option-change div
+      // This bypasses theme backup code (which causes Omnisend errors)
+      const form = checkbox.closest('form[data-cart-item-add]');
+      if (form) {
+        const optionDiv = form.querySelector('[data-product-option-change]');
+        if (optionDiv) {
+          // Dispatch change event directly to the div
+          optionDiv.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
     });
   });
 }
