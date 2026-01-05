@@ -134,7 +134,11 @@ async function initializeCheckboxes() {
 
     // Sync and trigger change on original checkbox
     // Let theme's backup code (product.html) handle the dispatch to option-change div
-    toggleCheckbox.addEventListener('change', () => {
+    toggleCheckbox.addEventListener('change', (e) => {
+      // CRITICAL: Stop the toggle's native change event from bubbling
+      // Otherwise theme backup code catches BOTH toggle and original checkbox events
+      e.stopPropagation();
+      
       checkbox.checked = toggleCheckbox.checked;
       
       // Fire change event on ORIGINAL checkbox (has proper name attribute)
