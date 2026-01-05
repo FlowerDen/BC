@@ -144,23 +144,11 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Tiny delay to ensure checkbox state is committed before dispatching
-      setTimeout(() => {
-        // Dispatch to option-change div with checkbox as target
-        const form = checkbox.closest('form[data-cart-item-add]');
-        if (form) {
-          const optionChangeDiv = form.querySelector('[data-product-option-change]');
-          if (optionChangeDiv) {
-            // Create event with checkbox as target
-            const event = new Event('change', { bubbles: true });
-            Object.defineProperty(event, 'target', {
-              writable: false,
-              value: checkbox
-            });
-            optionChangeDiv.dispatchEvent(event);
-          }
-        }
-      }, 0);
+      // Fire change event ON THE CHECKBOX itself (not the div)
+      // This ensures jQuery's $(event.target) properly identifies the checkbox
+      // The event will bubble up to [data-product-option-change] div where theme listens
+      const event = new Event('change', { bubbles: true });
+      checkbox.dispatchEvent(event);
     });
   });
 }
