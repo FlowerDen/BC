@@ -50,13 +50,11 @@
         // Initial state
         update();
 
-        // Watch the original checkbox for changes (Modern-Checkbox updates it)
-        const observer = new MutationObserver(update);
-        observer.observe(checkbox, { 
-            attributes: true, 
-            attributeFilter: ['checked'],
-            attributeOldValue: true
-        });
+        // Listen to changes - check every 200ms (won't interfere with BigCommerce)
+        // MutationObserver doesn't work because Modern-Checkbox sets property, not attribute
+        setInterval(() => {
+            update();
+        }, 200);
 
         console.log("Custom Ribbon initialized successfully");
         return true;
