@@ -153,7 +153,7 @@ async function initializeCheckboxes() {
         
         window.stencilUtils.api.productAttributes.optionChange(
           formData,
-          null,
+          { template: 'products/bulk-discount-rates' },
           (err, response) => {
             if (err) {
               console.error('BigCommerce price update error:', err);

@@ -51,9 +51,12 @@
         update();
 
         // Listen to the TOGGLE checkbox instead of the original
-        // Toggle is inserted as nextSibling to the original checkbox
-        const toggleLabel = checkbox.nextSibling;
-        const toggleCheckbox = toggleLabel?.querySelector('.fd-toggle-checkbox');
+        // Toggle is inserted as nextElementSibling (skip text nodes)
+        const toggleLabel = checkbox.nextElementSibling;
+        const toggleCheckbox = toggleLabel?.classList.contains('fd-toggle') 
+            ? toggleLabel.querySelector('.fd-toggle-checkbox')
+            : null;
+        
         if (toggleCheckbox) {
             toggleCheckbox.addEventListener('change', update);
         } else {
