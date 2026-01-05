@@ -126,8 +126,12 @@ async function initializeCheckboxes() {
     // Insert toggle after the original checkbox
     checkbox.parentNode.insertBefore(toggleLabel, checkbox.nextSibling);
 
-    // Hide the original checkbox
-    checkbox.style.display = 'none';
+    // Hide the original checkbox visually but keep it accessible to BigCommerce
+    // Using position absolute instead of display:none so BC can still detect it
+    checkbox.style.position = 'absolute';
+    checkbox.style.left = '-9999px';
+    checkbox.style.width = '1px';
+    checkbox.style.height = '1px';
 
     // Get references to both checkboxes
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
