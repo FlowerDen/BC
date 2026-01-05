@@ -144,9 +144,23 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire bubbling change event on the original checkbox
-      // Let it work exactly like products WITHOUT custom ribbon
-      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      // Use BigCommerce's stencilUtils API to force price update
+      // This bypasses all event handling that might be broken
+      const form = checkbox.closest('form[data-cart-item-add]');
+      if (form && window.stencilUtils && window.utils && window.utils.api) {
+        const formData = new FormData(form);
+        const productId = document.querySelector('[name="product_id"]')?.value;
+        
+        if (productId) {
+          window.utils.api.productAttributes.optionChange(productId, formData, (err, response) => {
+            if (err) {
+              console.error('BigCommerce API error:', err);
+              return;
+            }
+            // Success - BigCommerce updates price automatically
+          });
+        }
+      }
     });
   });
 }
