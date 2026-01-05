@@ -50,19 +50,12 @@
         // Initial state
         update();
 
-        // Listen to the TOGGLE checkbox instead of the original
-        // Toggle is inserted as nextElementSibling (skip text nodes)
-        const toggleLabel = checkbox.nextElementSibling;
-        const toggleCheckbox = toggleLabel?.classList.contains('fd-toggle') 
-            ? toggleLabel.querySelector('.fd-toggle-checkbox')
-            : null;
-        
-        if (toggleCheckbox) {
-            toggleCheckbox.addEventListener('change', update);
-        } else {
-            // Fallback if toggle not found (shouldn't happen)
-            checkbox.addEventListener('change', update);
-        }
+        // SIMPLE: Just watch the original checkbox state on a timer
+        // Since Modern-Checkbox updates checkbox.checked, we can poll it
+        // Use a long interval (500ms) so it doesn't interfere with BC
+        setInterval(() => {
+            update();
+        }, 500);
 
         console.log("Custom Ribbon initialized successfully");
         return true;

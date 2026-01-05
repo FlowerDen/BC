@@ -141,28 +141,12 @@ async function initializeCheckboxes() {
       // CRITICAL: Stop the toggle's native change event from bubbling
       e.stopPropagation();
       
-      // Update the original checkbox state silently (no events)
-      // custom-ribbon-text.js listens to the toggle directly
+      // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Use BigCommerce stencilUtils API directly for price updates
-      // This is the proper way to trigger option changes without events
-      const form = checkbox.closest('form[data-cart-item-add]');
-      if (form && window.stencilUtils) {
-        const formData = new FormData(form);
-        
-        window.stencilUtils.api.productAttributes.optionChange(
-          formData,
-          { template: 'products/bulk-discount-rates' },
-          (err, response) => {
-            if (err) {
-              console.error('BigCommerce price update error:', err);
-              return;
-            }
-            // BigCommerce automatically updates prices when API succeeds
-          }
-        );
-      }
+      // Fire bubbling change event on the original checkbox
+      // Let it work exactly like products WITHOUT custom ribbon
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
   });
 }
