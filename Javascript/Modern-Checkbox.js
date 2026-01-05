@@ -140,25 +140,35 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire NON-BUBBLING change event on the original checkbox first
-      // This ensures any direct listeners on the checkbox itself work
-      checkbox.dispatchEvent(new Event('change', { bubbles: false }));
-      
-      // THEN dispatch directly to BigCommerce's option-change div
-      // Bypass theme backup code to avoid double-dispatch and Omnisend errors
+      // Use BigCommerce's stencilUtils API directly to update product options
+      // This bypasses all event handling and directly triggers price updates
       const form = checkbox.closest('form[data-cart-item-add]');
-      if (form) {
-        const optionChangeDiv = form.querySelector('[data-product-option-change]');
-        if (optionChangeDiv) {
-          // Create event with checkbox as target (has proper name attribute)
-          const bcEvent = new Event('change', { bubbles: false });
-          Object.defineProperty(bcEvent, 'target', {
-            writable: false,
-            value: checkbox
-          });
-          optionChangeDiv.dispatchEvent(bcEvent);
-        }
+      if (form && window.stencilUtils) {
+        const formData = new FormData(form);
+        
+        // Call BigCommerce's product attributes API
+        window.stencilUtils.api.productAttributes.optionChange(
+          formData,
+          {
+            template: 'products/bulk-discount-rates'
+          },
+          (err, response) => {
+            if (err) {
+              console.error('Price update error:', err);
+              return;
+            }
+            
+            // Update the price display
+            const priceContainer = form.querySelector('[data-product-price-without-tax]');
+            if (priceContainer && response.data.price) {
+              priceContainer.innerHTML = response.data.price.without_tax.formatted;
+            }
+          }
+        );
       }
+      
+      // Also fire change event on checkbox for custom-ribbon-text.js
+      checkbox.dispatchEvent(new Event('change', { bubbles: false }));
     });
   });
 }
