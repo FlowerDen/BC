@@ -145,15 +145,23 @@ async function initializeCheckboxes() {
       // custom-ribbon-text.js listens to the toggle directly
       checkbox.checked = toggleCheckbox.checked;
       
-      // Manually trigger BigCommerce by dispatching to option-change div
-      // Don't fire any event on the checkbox itself - theme backup code would catch it
+      // Use BigCommerce stencilUtils API directly for price updates
+      // This is the proper way to trigger option changes without events
       const form = checkbox.closest('form[data-cart-item-add]');
-      if (form) {
-        const optionDiv = form.querySelector('[data-product-option-change]');
-        if (optionDiv) {
-          // Dispatch change event directly to the div
-          optionDiv.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+      if (form && window.stencilUtils) {
+        const formData = new FormData(form);
+        
+        window.stencilUtils.api.productAttributes.optionChange(
+          formData,
+          null,
+          (err, response) => {
+            if (err) {
+              console.error('BigCommerce price update error:', err);
+              return;
+            }
+            // BigCommerce automatically updates prices when API succeeds
+          }
+        );
       }
     });
   });

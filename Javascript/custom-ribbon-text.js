@@ -51,8 +51,9 @@
         update();
 
         // Listen to the TOGGLE checkbox instead of the original
-        // This avoids triggering theme backup code which causes Omnisend errors
-        const toggleCheckbox = checkbox.parentElement.querySelector('.fd-toggle-checkbox');
+        // Toggle is inserted as nextSibling to the original checkbox
+        const toggleLabel = checkbox.nextSibling;
+        const toggleCheckbox = toggleLabel?.querySelector('.fd-toggle-checkbox');
         if (toggleCheckbox) {
             toggleCheckbox.addEventListener('change', update);
         } else {
