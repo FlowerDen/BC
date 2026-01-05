@@ -144,21 +144,18 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Use BigCommerce's stencilUtils API to force price update
-      // This bypasses all event handling that might be broken
+      // Dispatch to option-change div with checkbox as target
       const form = checkbox.closest('form[data-cart-item-add]');
-      if (form && window.stencilUtils && window.utils && window.utils.api) {
-        const formData = new FormData(form);
-        const productId = document.querySelector('[name="product_id"]')?.value;
-        
-        if (productId) {
-          window.utils.api.productAttributes.optionChange(productId, formData, (err, response) => {
-            if (err) {
-              console.error('BigCommerce API error:', err);
-              return;
-            }
-            // Success - BigCommerce updates price automatically
+      if (form) {
+        const optionChangeDiv = form.querySelector('[data-product-option-change]');
+        if (optionChangeDiv) {
+          // Create event with checkbox as target
+          const event = new Event('change', { bubbles: true });
+          Object.defineProperty(event, 'target', {
+            writable: false,
+            value: checkbox
           });
+          optionChangeDiv.dispatchEvent(event);
         }
       }
     });
