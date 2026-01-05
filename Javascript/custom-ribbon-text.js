@@ -52,10 +52,10 @@
 
         // SIMPLE: Just watch the original checkbox state on a timer
         // Since Modern-Checkbox updates checkbox.checked, we can poll it
-        // Use a long interval (500ms) so it doesn't interfere with BC
+        // Use 100ms interval for faster response
         setInterval(() => {
             update();
-        }, 500);
+        }, 100);
 
         console.log("Custom Ribbon initialized successfully");
         return true;
