@@ -50,11 +50,9 @@
         // Initial state
         update();
 
-        // Listen to changes - check every 200ms (won't interfere with BigCommerce)
-        // MutationObserver doesn't work because Modern-Checkbox sets property, not attribute
-        setInterval(() => {
-            update();
-        }, 200);
+        // Listen to checkbox change events instead of polling
+        // This won't interfere with BigCommerce price updates
+        checkbox.addEventListener('change', update);
 
         console.log("Custom Ribbon initialized successfully");
         return true;

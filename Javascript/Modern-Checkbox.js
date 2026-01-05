@@ -144,35 +144,8 @@ async function initializeCheckboxes() {
       // Update the original checkbox state
       checkbox.checked = toggleCheckbox.checked;
       
-      // Use BigCommerce's stencilUtils API directly to update product options
-      // This bypasses all event handling and directly triggers price updates
-      const form = checkbox.closest('form[data-cart-item-add]');
-      if (form && window.stencilUtils) {
-        const formData = new FormData(form);
-        
-        // Call BigCommerce's product attributes API
-        window.stencilUtils.api.productAttributes.optionChange(
-          formData,
-          {
-            template: 'products/bulk-discount-rates'
-          },
-          (err, response) => {
-            if (err) {
-              console.error('Price update error:', err);
-              return;
-            }
-            
-            // Update the price display
-            const priceContainer = form.querySelector('[data-product-price-without-tax]');
-            if (priceContainer && response.data.price) {
-              priceContainer.innerHTML = response.data.price.without_tax.formatted;
-            }
-          }
-        );
-      }
-      
-      // Also fire change event on checkbox for custom-ribbon-text.js
-      checkbox.dispatchEvent(new Event('change', { bubbles: false }));
+      // Fire a simple bubbling change event - let BigCommerce handle it naturally
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
   });
 }
