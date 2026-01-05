@@ -132,10 +132,13 @@ async function initializeCheckboxes() {
     // Get references to both checkboxes
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
 
-    // Silent sync only - no events, no API calls
-    // BigCommerce will detect the checkbox state naturally on form interactions
+    // Sync and trigger change on original checkbox (which has proper name attribute)
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
+      
+      // Fire change event on the ORIGINAL checkbox (which has name attribute)
+      // This triggers the theme's backup code, which then dispatches to BigCommerce
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     });
   });
 }
