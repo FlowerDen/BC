@@ -50,9 +50,15 @@
         // Initial state
         update();
 
-        // Listen to checkbox change events instead of polling
-        // This won't interfere with BigCommerce price updates
-        checkbox.addEventListener('change', update);
+        // Listen to the TOGGLE checkbox instead of the original
+        // This avoids triggering theme backup code which causes Omnisend errors
+        const toggleCheckbox = checkbox.parentElement.querySelector('.fd-toggle-checkbox');
+        if (toggleCheckbox) {
+            toggleCheckbox.addEventListener('change', update);
+        } else {
+            // Fallback if toggle not found (shouldn't happen)
+            checkbox.addEventListener('change', update);
+        }
 
         console.log("Custom Ribbon initialized successfully");
         return true;

@@ -141,14 +141,12 @@ async function initializeCheckboxes() {
       // CRITICAL: Stop the toggle's native change event from bubbling
       e.stopPropagation();
       
-      // Update the original checkbox state
+      // Update the original checkbox state silently (no events)
+      // custom-ribbon-text.js listens to the toggle directly
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire NON-BUBBLING change on checkbox for custom-ribbon-text.js
-      checkbox.dispatchEvent(new Event('change', { bubbles: false }));
-      
       // Manually trigger BigCommerce by dispatching to option-change div
-      // This bypasses theme backup code (which causes Omnisend errors)
+      // Don't fire any event on the checkbox itself - theme backup code would catch it
       const form = checkbox.closest('form[data-cart-item-add]');
       if (form) {
         const optionDiv = form.querySelector('[data-product-option-change]');
