@@ -132,13 +132,25 @@ async function initializeCheckboxes() {
     // Get references to both checkboxes
     const toggleCheckbox = toggleLabel.querySelector('.fd-toggle-checkbox');
 
-    // Sync and trigger change on original checkbox (which has proper name attribute)
+    // Sync and trigger price update
     toggleCheckbox.addEventListener('change', () => {
       checkbox.checked = toggleCheckbox.checked;
       
-      // Fire change event on the ORIGINAL checkbox (which has name attribute)
-      // This triggers the theme's backup code, which then dispatches to BigCommerce
-      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      // Directly dispatch to BigCommerce's option change handler
+      // Skip firing event on checkbox to avoid Omnisend interception
+      const form = checkbox.closest('form[data-cart-item-add]');
+      if (form) {
+        const optionChangeDiv = form.querySelector('[data-product-option-change]');
+        if (optionChangeDiv) {
+          // Create a properly structured event with target that has name
+          const event = new Event('change', { bubbles: false }); // Don't bubble to avoid Omnisend
+          Object.defineProperty(event, 'target', {
+            writable: false,
+            value: checkbox // Use the original checkbox as target (has name attribute)
+          });
+          optionChangeDiv.dispatchEvent(event);
+        }
+      }
     });
   });
 }
