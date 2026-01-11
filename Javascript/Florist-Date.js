@@ -254,7 +254,12 @@ function ensureSelectsTrigger(selectsRoot) {
   btn.textContent = "📅 Choose Delivery Date";
 
   wrapper.appendChild(btn);
+const label = selectsRoot.querySelector("label");
+if (label && label.parentNode === selectsRoot) {
+  label.insertAdjacentElement("afterend", wrapper);
+} else {
   selectsRoot.insertBefore(wrapper, selectsRoot.firstChild);
+}
 
   return btn;
 }
