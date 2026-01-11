@@ -189,41 +189,24 @@ function detectOldThemeElements() {
   return null;
 }
 
+/* REPLACED: more reliable BigCommerce date-field detection */
 function findDeliveryDateSelects() {
-  // Find a label/legend containing "Delivery Date"
-  const candidates = [...document.querySelectorAll("label, legend, .form-label, .form-field-title")];
-  const label = candidates.find(el => (el.textContent || "").toLowerCase().includes("delivery date"));
-  if (!label) return null;
+  const dateFields = [...document.querySelectorAll('.form-field[data-product-attribute="date"]')];
 
-  const root =
-    label.closest(".form-field, .form-group, .product-form-field, fieldset, .form-fieldset")
-    || label.parentElement;
+  // Prefer the one labeled "Delivery Date" if multiple date fields exist
+  const chosen =
+    dateFields.find(f =>
+      (f.querySelector("label")?.textContent || "").toLowerCase().includes("delivery date")
+    ) || dateFields[0];
 
-  if (!root) return null;
+  if (!chosen) return null;
 
-  const selects = [...root.querySelectorAll("select")];
-  if (selects.length < 3) return null;
-
-  const yearSelect = selects.find(s =>
-    [...s.options].some(o => /^\d{4}$/.test((o.value || o.text || "").trim()))
-  );
-
-  const monthSelect = selects.find(s =>
-    [...s.options].some(o => {
-      const v = ((o.value || o.text || "") + "").toLowerCase().trim();
-      return v === "1" || v === "01" || v.includes("jan");
-    })
-  );
-
-  const daySelect = selects.find(s =>
-    [...s.options].some(o => {
-      const v = ((o.value || o.text || "") + "").trim();
-      return v === "1" || v === "01" || v === "31";
-    })
-  );
+  const yearSelect = chosen.querySelector('select[name$="[year]"]');
+  const monthSelect = chosen.querySelector('select[name$="[month]"]');
+  const daySelect = chosen.querySelector('select[name$="[day]"]');
 
   if (!yearSelect || !monthSelect || !daySelect) return null;
-  return { mode: "selects", root, yearSelect, monthSelect, daySelect };
+  return { mode: "selects", root: chosen, yearSelect, monthSelect, daySelect };
 }
 
 function setSelectValue(select, value) {
@@ -238,6 +221,19 @@ function setSelectValue(select, value) {
   select.value = opt.value;
   select.dispatchEvent(new Event("change", { bubbles: true }));
   return true;
+}
+
+/* ADDED: retry helpers for BigCommerce select updates */
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+async function setSelectValueWithRetry(select, value, retries = 40, delayMs = 50) {
+  for (let i = 0; i < retries; i++) {
+    if (setSelectValue(select, value)) return true;
+    await sleep(delayMs);
+  }
+  return false;
 }
 
 /* ------------------ UI + UPDATE ADAPTERS ------------------ */
@@ -364,17 +360,20 @@ async function initializeDatePicker() {
     root.appendChild(dateInput);
   }
 
-  function updateSelectsFromDate(selectedDate) {
+  /* REPLACED: sequential + retry to avoid BigCommerce timing issues */
+  async function updateSelectsFromDate(selectedDate) {
     if (!selectedDate) return;
 
     const y = selectedDate.getFullYear();
     const m = selectedDate.getMonth() + 1;
     const d = selectedDate.getDate();
 
-    // Set in order: year -> month -> day (some option logic depends on earlier fields)
-    setSelectValue(yearSelect, y);
-    setSelectValue(monthSelect, m);
-    setSelectValue(daySelect, d);
+    // Set in order with pauses so BC/theme scripts can react
+    await setSelectValueWithRetry(yearSelect, y);
+    await sleep(50);
+    await setSelectValueWithRetry(monthSelect, m);
+    await sleep(75);
+    await setSelectValueWithRetry(daySelect, d);
 
     updateTriggerLabel(triggerButton, selectedDate);
   }
@@ -391,14 +390,14 @@ async function initializeDatePicker() {
         dayElem.classList.add("holiday");
       }
     },
-    onChange: function (selectedDates) {
+    onChange: async function (selectedDates) {
       if (!selectedDates[0]) return;
-      updateSelectsFromDate(selectedDates[0]);
+      await updateSelectsFromDate(selectedDates[0]);
     }
   });
 
   triggerButton.addEventListener("click", () => picker.open());
-  updateSelectsFromDate(defaultDate);
+  await updateSelectsFromDate(defaultDate);
 }
 
 initializeDatePicker();
