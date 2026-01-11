@@ -20,7 +20,10 @@ function injectDatePickerCSS() {
       width: 100%;
       margin-bottom: 10px;
     }
-
+/* Hide native date selects when florist picker is active (new theme) */
+.florist-native-date-hidden select.form-select--date {
+  display: none !important;
+}
     #CalendarTrigger,
     .florist-calendar-trigger {
       background-color: #fff;
@@ -345,6 +348,7 @@ async function initializeDatePicker() {
   // NEW THEME (SELECTS) MODE
   const { root, yearSelect, monthSelect, daySelect } = selects;
   const triggerButton = ensureSelectsTrigger(root);
+  root.classList.add("florist-native-date-hidden");
 
   // Hidden input for flatpickr
   let dateInput = root.querySelector("input.florist-flatpickr-input");
