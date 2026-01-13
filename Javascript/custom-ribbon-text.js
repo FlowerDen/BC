@@ -9,56 +9,78 @@
     let attemptCount = 0;
     const maxAttempts = 50;
 
+    // Define ribbon pairs: [checkbox identifier, text field identifier]
+    const ribbonPairs = [
+        { checkbox: "custom ribbon", textField: "custom ribbon text" },
+        { checkbox: "standing spray custom ribbon", textField: "standing spray ribbon text" },
+        { checkbox: "casket spray custom ribbon", textField: "casket spray ribbon text" }
+    ];
+
     function initCustomRibbon() {
         attemptCount++;
 
-        // Find the Custom Ribbon checkbox by searching all checkboxes
-        const checkbox = [...document.querySelectorAll('input[type="checkbox"]')]
-            .find(cb => {
-                const container = cb.closest('[data-product-attribute]') || cb.parentElement;
-                return container && container.innerText.toLowerCase().includes("custom ribbon");
-            });
+        let allInitialized = true;
 
-        if (!checkbox) {
-            if (attemptCount >= maxAttempts) {
-                console.log("Custom Ribbon checkbox not found after " + maxAttempts + " attempts. Stopping observer.");
-                return true; // Stop observer
+        // Process each ribbon pair
+        ribbonPairs.forEach(pair => {
+            // Find the Custom Ribbon checkbox
+            const checkbox = [...document.querySelectorAll('input[type="checkbox"]')]
+                .find(cb => {
+                    const container = cb.closest('[data-product-attribute]') || cb.parentElement;
+                    return container && container.innerText.toLowerCase().includes(pair.checkbox);
+                });
+
+            if (!checkbox) {
+                allInitialized = false;
+                return;
             }
-            return false;
-        }
 
-        // Find the Custom Ribbon Text field
-        const ribbonTextField = [...document.querySelectorAll('[data-product-attribute]')]
-            .find(f => f.innerText.toLowerCase().includes("custom ribbon text"));
+            // Find the Text field
+            const ribbonTextField = [...document.querySelectorAll('[data-product-attribute]')]
+                .find(f => f.innerText.toLowerCase().includes(pair.textField));
 
-        if (!ribbonTextField) return false;
-
-        const ribbonTextInput = ribbonTextField.querySelector("input");
-        if (!ribbonTextInput) return false;
-
-        function update() {
-            const enabled = checkbox.checked;
-
-            ribbonTextField.classList.toggle("custom-ribbon-hidden", !enabled);
-            ribbonTextInput.required = enabled;
-
-            if (!enabled) {
-                ribbonTextInput.value = "";
+            if (!ribbonTextField) {
+                allInitialized = false;
+                return;
             }
-        }
 
-        // Initial state
-        update();
+            const ribbonTextInput = ribbonTextField.querySelector("input");
+            if (!ribbonTextInput) {
+                allInitialized = false;
+                return;
+            }
 
-        // SIMPLE: Just watch the original checkbox state on a timer
-        // Since Modern-Checkbox updates checkbox.checked, we can poll it
-        // Use 100ms interval for faster response
-        setInterval(() => {
+            function update() {
+                const enabled = checkbox.checked;
+
+                ribbonTextField.classList.toggle("custom-ribbon-hidden", !enabled);
+                ribbonTextInput.required = enabled;
+
+                if (!enabled) {
+                    ribbonTextInput.value = "";
+                }
+            }
+
+            // Initial state
             update();
-        }, 100);
 
-        console.log("Custom Ribbon initialized successfully");
-        return true;
+            // Listen to checkbox changes directly (no polling)
+            checkbox.addEventListener('change', update);
+
+            console.log(pair.checkbox + " initialized successfully");
+        });
+
+        if (allInitialized) {
+            console.log("All ribbon pairs initialized successfully");
+            return true;
+        }
+
+        if (attemptCount >= maxAttempts) {
+            console.log("Not all ribbon pairs found after " + maxAttempts + " attempts. Stopping observer.");
+            return true; // Stop observer
+        }
+
+        return false;
     }
 
     // Observe DOM until product options exist

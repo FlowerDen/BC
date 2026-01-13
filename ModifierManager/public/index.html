@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigCommerce Modifier Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .modifier-config {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e6ed;
+        }
+        
+        .modifier-item {
+            display: grid;
+            grid-template-columns: 3fr 1.5fr 1.5fr auto;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: end;
+        }linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4)
+            flex-direction: column;
+        }
+        
+        .help-text {
+            font-size: 11px;
+            color: #999;
+            margin-top: 3px;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        95a5a6;
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            padding: 8px 16px;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ee5a6f 0%, #ff6b6b 100%)
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .result-item.error {
+            border-left-color: #dc3545;
+        }
+        
+        .result-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .result-details {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .result-details div {
+            margin: 3px 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .preset-buttons button {
+            flex: 1;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px 24px;
+            background: #e9ecef;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;667eea;
+            color: #667eea;
+            font-weight: 600x;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab-button:hover {
+            background: #dee2e6;
+        }
+        
+        .tab-button.active {
+            background: white;
+            border-bottom-color: #007bff;
+            color: #007bff;
+        }
+        
+        .tab-content {
+            display: none;
+        }8px; margin-bottom: 20px; display: none;">
+            <strong>⚙️ API Settings:</strong> 
+            <span id="settingsStatus">Not configured</span>
+            <button onclick="openSettings()" style="margin-left: 10px; padding: 8px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3)
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ BigCommerce Modifier Manager</h1>
+        <p class="subtitle">Manage product modifiers across multiple products with ease</p>
+        
+        <!-- Settings Banner -->
+        <div id="settingsBanner" style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 20px; display: none;">
+            <strong>⚙️ API Settings:</strong> 
+            <span id="settingsStatus">Not configured</span>
+            <button onclick="openSettings()" style="margin-left: 10px; padding: 5px 15px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">Configure</button>
+        </div>
+        
+        <!-- Settings Modal -->
+        <div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 30px; border-radius: 8px; max-width: 500px; width: 90%;">
+                <h2 style="margin-top: 0;">API Configuration</h2>
+                <p style="color: #666; margin-bottom: 20px;">Enter your BigCommerce API credentials. These are stored in your browser session only.</p>
+                
+                <div class="input-group">
+                    <label>Store Hash:</label>
+                    <input type="text" id="settingsStoreHash" placeholder="e.g., jxetu2nhyu">
+                    <small style="color: #666; display: block; margin-top: 5px;">Found in your store URL: store-<strong>[HASH]</strong>.mybigcommerce.com</small>
+                </div>
+                
+                <div class="input-group">
+                    <label>API Access Token:</label>
+                    <input type="password" id="settingsAccessToken" placeholder="Your API token">
+                    <small style="color: #666; display: block; margin-top: 5px;">Get from: Settings → API → Store-level API accounts</small>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button onclick="saveSettings()" style="flex: 1;">Save Settings</button>
+                    <button onclick="closeSettings()" class="btn-secondary" style="flex: 1;">Cancel</button>
+                </div>
+                
+                <div id="settingsError" style="color: #dc3545; margin-top: 15px; display: none;"></div>
+                <div id="settingsSuccess" style="color: #28a745; margin-top: 15px; display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>1. Select Products</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('single')">Single Product</button>
+                <button class="tab-button" onclick="switchTab('category')">By Category</button>
+                <button class="tab-button" onclick="switchTab('multiple')">Multiple Products</button>
+            </div>
+            
+            <div id="tab-single" class="tab-content active">
+                <div class="input-group">
+                    <label>Product ID:</label>
+                    <input type="number" id="productId" placeholder="e.g., 350">
+                </div>
+            </div>
+            
+            <div id="tab-category" class="tab-content">
+                <div class="input-group">
+                    <label>Category ID:</label>
+                    <input type="number" id="categoryId" placeholder="e.g., 52">
+                </div>
+                <button class="btn-secondary" onclick="loadCategoryProducts()">Load Products from Category</button>
+                <div id="categoryProducts" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div id="tab-multiple" class="tab-content">
+                <div class="input-group">
+                    <label>Product IDs (comma-separated):</label>
+                    <input type="text" id="multipleProductIds" placeholder="e.g., 350, 423, 196">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>2. Configure Modifiers</h2>
+            
+            <div class="preset-buttons">
+                <button class="btn-secondary" onclick="loadPreset('standard')">Load Standard Config</button>
+                <button class="btn-secondary" onclick="loadPreset('custom')">Load Custom Config</button>
+                <button class="btn-secondary" onclick="clearConfig()">Clear All</button>
+            </div>
+            
+            <div classtyle="display: grid; grid-template-columns: 3fr 1.5fr 1.5fr auto; gap: 10px; margin-bottom: 10px; padding: 0 5px;">
+                    <div class="field-label">Modifier Display Name</div>
+                    <div class="field-label">Sort Order<br><span style="font-size: 10px; text-transform: none; font-weight: normal;">(Lower = appears first)</span></div>
+                    <div class="field-label">Price Adjuster<br><span style="font-size: 10px; text-transform: none; font-weight: normal;">($ added when checked)</span></div>
+                    <div></div>
+                </div>
+                <div s="modifier-config">
+                <div id="modifierList">
+                    <!-- Modifiers will be added here -->
+                </div>
+                <button class="btn-secondary" onclick="addModifier()">+ Add Modifier</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <button onclick="applyModifiers()" id="applyBtn">Apply to Selected Products</button>
+        </div>
+        
+        <div id="results" class="results"></div>
+    </div>
+    
+    <script>
+        let modifierCount = 0;
+        let selectedProducts = [];
+        
+        // Check settings on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkSettings();
+            loadPreset('standard');
+        });
+        
+        // Check if API settings are configured
+        async function checkSettings() {
+            try {
+                const response = await fetch('/api/settings');
+                const settings = await response.json();
+                
+                const banner = document.getElementById('settingsBanner');
+                const status = document.getElementById('settingsStatus');
+                
+                if (settings.storeHash && settings.hasToken) {
+                    status.textContent = `Store: ${settings.storeHash} | Token: ${settings.tokenPreview}`;
+                    banner.style.background = '#d4edda';
+                    banner.style.borderColor = '#28a745';
+                } else {
+                    status.textContent = 'Click "Configure" to enter your API credentials';
+                    banner.style.background = '#fff3cd';
+                    banner.style.borderColor = '#ffc107';
+                }
+                
+                banner.style.display = 'block';
+            } catch (error) {
+                console.error('Failed to check settings:', error);
+            }
+        }
+        
+        // Open settings modal
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        
+        // Close settings modal
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.getElementById('settingsError').style.display = 'none';
+            document.getElementById('settingsSuccess').style.display = 'none';
+        }
+        
+        // Save settings
+        async function saveSettings() {
+            const storeHash = document.getElementById('settingsStoreHash').value.trim();
+            const accessToken = document.getElementById('settingsAccessToken').value.trim();
+            const errorDiv = document.getElementById('settingsError');
+            const successDiv = document.getElementById('settingsSuccess');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            if (!storeHash || !accessToken) {
+                errorDiv.textContent = 'Please enter both store hash and access token';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ storeHash, accessToken })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    successDiv.textContent = 'Settings saved successfully!';
+                    successDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closeSettings();
+                        checkSettings();
+                    }, 1500);
+                } else {
+                    errorDiv.textContent = result.error || 'Failed to save settings';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        // Switch between tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+        
+        // Load category products
+        async function loadCategoryProducts() {
+            const categoryId = document.getElementById('categoryId').value;
+            if (!categoryId) {
+                alert('Please enter a category ID');
+                return;
+            }
+            
+            const container = document.getElementById('categoryProducts');
+            container.innerHTML = '<div class="loading">Loading products...</div>';
+            
+            try {
+                const response = await fetch(`/api/products/category/${categoryId}`);
+                const products = await response.json();
+                
+                if (products.length === 0) {
+                    container.innerHTML = '<p>No products found in this category.</p>';
+                    return;
+                }
+                
+                selectedProducts = products.map(p => p.id);
+                
+                container.innerHTML = `
+                    <div style="background: #e8f4f8; padding: 10px; border-radius: 4px;">
+                        <strong>${products.length} products found:</strong><br>
+                        ${products.slice(0, 5).map(p => `• ${p.name} (ID: ${p.id})`).join('<br>')}
+                        ${products.length > 5 ? `<br>... and ${products.length - 5} more` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Add a modifier configuration row
+        function addModifier() {
+            modifierCount++;e.g., Full Size Card (+5)" id="name-${modifierCount}">
+                <input type="number" placeholder="e.g., 9" id="sort-${modifierCount}" min="0">
+                <input type="number" placeholder="e.g., 5" id="price-${modifierCount}" min="0">
+                <button class="btn-danger" onclick="removeModifier(${modifierCount})">✕
+            div.id = `modifier-${modifierCount}`;
+            div.innerHTML = `
+                <input type="text" placeholder="Display Name (e.g., Full Size Card (+5))" id="name-${modifierCount}">
+                <input type="number" placeholder="Sort Order" id="sort-${modifierCount}">
+                <input type="number" placeholder="Price (+$)" id="price-${modifierCount}">
+                <button class="btn-secondary" onclick="removeModifier(${modifierCount})">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+        
+        // Remove a modifier row
+        function removeModifier(id) {
+            document.getElementById(`modifier-${id}`).remove();
+        }
+        
+        // Load preset configurations
+        function loadPreset(type) {
+            clearConfig();
+            
+            if (type === 'standard') {
+                // Standard: Full Size Card + Custom Ribbon
+                addModifierConfig('Full Size Card (+5)', 9, 5);
+                addModifierConfig('Custom Ribbon (+5)', 10, 5);
+            } else if (type === 'custom') {
+                // Add some empty rows for custom config
+                addModifier();
+                addModifier();
+            }
+        }
+        
+        // Add a configured modifier (helper for presets)
+        function addModifierConfig(name, sortOrder, price) {
+            modifierCount++;id="name-${modifierCount}" value="${name}">
+                <input type="number" id="sort-${modifierCount}" value="${sortOrder}" min="0">
+                <input type="number" id="price-${modifierCount}" value="${price}" min="0">
+                <button class="btn-danger" onclick="removeModifier(${modifierCount})">✕
+            div.id = `modifier-${modifierCount}`;
+            div.innerHTML = `
+                <input type="text" placeholder="Display Name" id="name-${modifierCount}" value="${name}">
+                <input type="number" placeholder="Sort Order" id="sort-${modifierCount}" value="${sortOrder}">
+                <input type="number" placeholder="Price (+$)" id="price-${modifierCount}" value="${price}">
+                <button class="btn-secondary" onclick="removeModifier(${modifierCount})">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+        
+        // Clear all modifiers
+        function clearConfig() {
+            document.getElementById('modifierList').innerHTML = '';
+            modifierCount = 0;
+        }
+        
+        // Get configured modifiers
+        function getModifierConfig() {
+            const config = [];
+            for (let i = 1; i <= modifierCount; i++) {
+                const nameInput = document.getElementById(`name-${i}`);
+                if (!nameInput) continue; // Skip removed items
+                
+                const name = nameInput.value;
+                const sortOrder = parseInt(document.getElementById(`sort-${i}`).value) || 0;
+                const price = parseInt(document.getElementById(`price-${i}`).value) || 0;
+                
+                if (name) {
+                    config.push({
+                        display_name: name,
+                        type: 'checkbox',
+                        required: false,
+                        sort_order: sortOrder,
+                        price_adjuster: price > 0 ? price : null,
+                        config: { checked_by_default: false }
+                    });
+                }
+            }
+            return config;
+        }
+        
+        // Get selected product IDs
+        function getSelectedProducts() {
+            const activeTab = document.querySelector('.tab-content.active');
+            
+            if (activeTab.id === 'tab-single') {
+                const id = document.getElementById('productId').value;
+                return id ? [parseInt(id)] : [];
+            } else if (activeTab.id === 'tab-category') {
+                return selectedProducts;
+            } else if (activeTab.id === 'tab-multiple') {
+                const ids = document.getElementById('multipleProductIds').value;
+                return ids.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            }
+            
+            return [];
+        }
+        
+        // Apply modifiers to selected products
+        async function applyModifiers() {
+            const products = getSelectedProducts();
+            const config = getModifierConfig();
+            
+            if (products.length === 0) {
+                alert('Please select at least one product');
+                return;
+            }
+            
+            if (config.length === 0) {
+                alert('Please configure at least one modifier');
+                return;
+            }
+            
+            const btn = document.getElementById('applyBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<div class="loading">Processing products...</div>';
+            
+            try {
+                const results = [];
+                
+                for (const productId of products) {
+                    try {
+                        const response = await fetch(`/api/products/${productId}/apply-modifiers`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ modifierConfig: config })
+                        });
+                        
+                        const result = await response.json();
+                        results.push(result);
+                    } catch (error) {
+                        results.push({ productId, error: error.message });
+                    }
+                }
+                
+                displayResults(results);
+                
+            } catch (error) {
+                resultsContainer.innerHTML = `<div class="result-item error"><div class="result-header">Error</div><div class="result-details">${error.message}</div></div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Apply to Selected Products';
+            }
+        }
+        
+        // Display results
+        function displayResults(results) {
+            const container = document.getElementById('results');
+            container.innerHTML = '<h2>Results</h2>';
+            
+            results.forEach(result => {
+                const hasError = result.error || result.errors?.length > 0;
+                const div = document.createElement('div');
+                div.className = `result-item ${hasError ? 'error' : ''}`;
+                
+                let html = `<div class="result-header">Product ${result.productId}</div>`;
+                html += '<div class="result-details">';
+                
+                if (result.error) {
+                    html += `<div style="color: #dc3545;">❌ Error: ${result.error}</div>`;
+                } else {
+                    if (result.deleted?.length > 0) {
+                        html += `<div>🗑️ Deleted: ${result.deleted.join(', ')}</div>`;
+                    }
+                    if (result.created?.length > 0) {
+                        html += `<div style="color: #28a745;">✓ Created: ${result.created.join(', ')}</div>`;
+                    }
+                    if (result.errors?.length > 0) {
+                        html += `<div style="color: #dc3545;">⚠️ Errors: ${result.errors.join(', ')}</div>`;
+                    }
+                }
+                
+                html += '</div>';
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+        
+        // Load standard preset on page load
+        loadPreset('standard');
+    </script>
+</body>
+</html>
