@@ -64,8 +64,12 @@
             // Initial state
             update();
 
-            // Listen to checkbox changes directly (no polling)
-            checkbox.addEventListener('change', update);
+            // SIMPLE: Just watch the original checkbox state on a timer
+            // Since Modern-Checkbox updates checkbox.checked, we can poll it
+            // Use 100ms interval for faster response
+            setInterval(() => {
+                update();
+            }, 100);
 
             console.log(pair.checkbox + " initialized successfully");
         });
