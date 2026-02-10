@@ -175,13 +175,25 @@
       'input[name="shippingAddress.addressLine1"],' +
       'input[name="shippingAddress[addressLine1]"]'
     );
+    const countrySelect = document.querySelector(
+      'select[name="shippingAddress.countryCode"],' +
+      'select[name="shippingAddress[countryCode]"]'
+    );
+
+    if (!shippingField && !countrySelect) {
+      console.warn('Shipping address form not found.');
+      return;
+    }
+
     const shippingForm =
-      document.querySelector('[data-test="shipping-address-form"]') ||
+      document.querySelector('[data-test*="shipping" i]') ||
       shippingField?.closest('form, section, fieldset, [data-test]') ||
-      shippingField?.closest('[class*="form"], div');
+      countrySelect?.closest('form, section, fieldset, [data-test]') ||
+      shippingField?.closest('[class*="form"], div') ||
+      countrySelect?.closest('[class*="form"], div');
 
     if (!shippingForm) {
-      console.warn('Shipping address form not found.');
+      console.warn('Shipping container not found.');
       return;
     }
 
@@ -190,10 +202,6 @@
       return;
     }
 
-    const countrySelect = shippingForm.querySelector(
-      'select[name="shippingAddress.countryCode"],' +
-      'select[name="shippingAddress[countryCode]"]'
-    );
     if (!countrySelect) {
       console.warn('Shipping country select not found.');
       return;
