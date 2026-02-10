@@ -171,14 +171,22 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
-    const countrySelect = document.querySelector(
+    const shippingForm = document.querySelector(
+      '[data-test="shipping-address-form"],' +
+      'form[aria-label*="Shipping" i],' +
+      'form[id*="shipping" i]'
+    );
+    if (!shippingForm) {
+      console.warn('Shipping address form not found.');
+      return;
+    }
+
+    const countrySelect = shippingForm.querySelector(
       'select[name="shippingAddress.countryCode"],' +
-      'select[name="shippingAddress[countryCode]"],' +
-      'select[name="countryCode"],' +
-      'select[id*="country"]'
+      'select[name="shippingAddress[countryCode]"]'
     );
     if (!countrySelect) {
-      console.warn('Country select not found. Tried multiple selectors.');
+      console.warn('Shipping country select not found.');
       return;
     }
 
@@ -288,7 +296,7 @@
     wrapper.appendChild(dropdownContainer);
 
     // Find the country label and insert before it
-    const countryLabel = document.querySelector('label[for*="country"], label');
+    const countryLabel = shippingForm.querySelector('label[for*="country"], label');
     const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
     
     // Insert at the very top of the delivery address section, before country
