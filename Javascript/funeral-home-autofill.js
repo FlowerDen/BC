@@ -171,6 +171,9 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
+    const shippingHeading = document.querySelector(
+      'legend[data-test="shipping-address-heading"], legend[data-test="shipping-address-heading"] *'
+    )?.closest('legend');
     const shippingField = document.querySelector(
       'input[name="shippingAddress.addressLine1"],' +
       'input[name="shippingAddress[addressLine1]"]'
@@ -186,6 +189,7 @@
     }
 
     const shippingForm =
+      shippingHeading?.closest('form, section, fieldset, [data-test]') ||
       document.querySelector('[data-test*="shipping" i]') ||
       shippingField?.closest('form, section, fieldset, [data-test]') ||
       countrySelect?.closest('form, section, fieldset, [data-test]') ||
