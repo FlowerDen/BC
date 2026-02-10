@@ -171,43 +171,14 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
-    const shippingHeading = document.querySelector(
-      'legend[data-test="shipping-address-heading"], legend[data-test="shipping-address-heading"] *'
-    )?.closest('legend');
-    const shippingField = document.querySelector(
-      'input[name="shippingAddress.addressLine1"],' +
-      'input[name="shippingAddress[addressLine1]"]'
-    );
     const countrySelect = document.querySelector(
       'select[name="shippingAddress.countryCode"],' +
-      'select[name="shippingAddress[countryCode]"]'
+      'select[name="shippingAddress[countryCode]"],' +
+      'select[name="countryCode"],' +
+      'select[id*="country"]'
     );
-
-    if (!shippingField && !countrySelect) {
-      console.warn('Shipping address form not found.');
-      return;
-    }
-
-    const shippingForm =
-      shippingHeading?.closest('form, section, fieldset, [data-test]') ||
-      document.querySelector('[data-test*="shipping" i]') ||
-      shippingField?.closest('form, section, fieldset, [data-test]') ||
-      countrySelect?.closest('form, section, fieldset, [data-test]') ||
-      shippingField?.closest('[class*="form"], div') ||
-      countrySelect?.closest('[class*="form"], div');
-
-    if (!shippingForm) {
-      console.warn('Shipping container not found.');
-      return;
-    }
-
-    if (shippingForm.querySelector('[data-test*="billing" i], input[name*="billingAddress" i], select[name*="billingAddress" i]')) {
-      console.warn('Detected billing container; skipping.');
-      return;
-    }
-
     if (!countrySelect) {
-      console.warn('Shipping country select not found.');
+      console.warn('Country select not found. Tried multiple selectors.');
       return;
     }
 
@@ -317,7 +288,7 @@
     wrapper.appendChild(dropdownContainer);
 
     // Find the country label and insert before it
-    const countryLabel = shippingForm.querySelector('label[for*="country"], label');
+    const countryLabel = document.querySelector('label[for*="country"], label');
     const fieldWrapper = countrySelect.closest('[class*="form"], div') || countrySelect.parentNode;
     
     // Insert at the very top of the delivery address section, before country
