@@ -171,13 +171,22 @@
   function injectDropdown() {
     if (document.getElementById('funeral-home-select')) return;
 
-    const shippingForm = document.querySelector(
-      '[data-test="shipping-address-form"],' +
-      'form[aria-label*="Shipping" i],' +
-      'form[id*="shipping" i]'
+    const shippingField = document.querySelector(
+      'input[name="shippingAddress.addressLine1"],' +
+      'input[name="shippingAddress[addressLine1]"]'
     );
+    const shippingForm =
+      document.querySelector('[data-test="shipping-address-form"]') ||
+      shippingField?.closest('form, section, fieldset, [data-test]') ||
+      shippingField?.closest('[class*="form"], div');
+
     if (!shippingForm) {
       console.warn('Shipping address form not found.');
+      return;
+    }
+
+    if (shippingForm.querySelector('[data-test*="billing" i], input[name*="billingAddress" i], select[name*="billingAddress" i]')) {
+      console.warn('Detected billing container; skipping.');
       return;
     }
 
