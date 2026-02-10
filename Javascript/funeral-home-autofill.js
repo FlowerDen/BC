@@ -182,6 +182,15 @@
       return;
     }
 
+    const stepContainer = countrySelect.closest('.checkout-step');
+    const hasShippingHeading = stepContainer?.querySelector(
+      'legend[data-test="shipping-address-heading"]'
+    );
+    if (!stepContainer || stepContainer.classList.contains('checkout-step--billing') || !hasShippingHeading) {
+      console.warn('Country select is not in the shipping step.');
+      return;
+    }
+
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '16px';
 
